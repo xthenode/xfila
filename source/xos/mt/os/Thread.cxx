@@ -20,6 +20,22 @@
 ///////////////////////////////////////////////////////////////////////
 #include "xos/mt/os/Thread.hxx"
 
+#if defined(WINDOWS)
+#include "xos/mt/microsoft/windows/Thread.cxx"
+#elif defined(MACOSX)
+#include "xos/mt/apple/osx/Thread.cxx"
+#elif defined(APPIOS)
+#include "xos/mt/apple/ios/Thread.cxx"
+#elif defined(ANDROID)
+#include "xos/mt/google/android/Thread.cxx"
+#elif defined(CHROMEOS)
+#include "xos/mt/google/chromeos/Thread.cxx"
+#elif defined(LINUX)
+#include "xos/mt/linux/Thread.cxx"
+#else /// defined(WINDOWS)
+#include "xos/mt/posix/Thread.cxx"
+#endif /// defined(WINDOWS)
+
 namespace xos {
 namespace mt {
 namespace os {

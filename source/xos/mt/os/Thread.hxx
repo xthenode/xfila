@@ -21,11 +21,29 @@
 #ifndef _XOS_MT_OS_THREAD_HXX_
 #define _XOS_MT_OS_THREAD_HXX_
 
+#include "xos/mt/os/Os.hxx"
+
+#if defined(WINDOWS)
+#include "xos/mt/microsoft/windows/Thread.hxx"
+#elif defined(MACOSX)
+#include "xos/mt/apple/osx/Thread.hxx"
+#elif defined(APPIOS)
+#include "xos/mt/apple/ios/Thread.hxx"
+#elif defined(ANDROID)
+#include "xos/mt/google/android/Thread.hxx"
+#elif defined(CHROMEOS)
+#include "xos/mt/google/chromeos/Thread.hxx"
+#elif defined(LINUX)
+#include "xos/mt/linux/Thread.hxx"
+#else /// defined(WINDOWS)
 #include "xos/mt/posix/Thread.hxx"
+#endif /// defined(WINDOWS)
 
 namespace xos {
 namespace mt {
 namespace os {
+
+typedef os::Thread Thread;
 
 } /// namespace os
 } /// namespace mt

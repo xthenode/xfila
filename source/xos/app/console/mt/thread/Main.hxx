@@ -22,6 +22,10 @@
 #define _XOS_APP_CONSOLE_MT_THREAD_MAIN_HXX_
 
 #include "xos/mt/Thread.hxx"
+#include "xos/mt/os/Thread.hxx"
+#include "xos/mt/microsoft/windows/crt/Thread.hxx"
+#include "xos/mt/microsoft/windows/Thread.hxx"
+#include "xos/mt/apple/osx/Thread.hxx"
 #include "xos/mt/posix/Thread.hxx"
 #include "xos/mt/os/Sleep.hxx"
 #include "xos/app/console/mt/thread/MainOpt.hxx"
@@ -79,8 +83,24 @@ protected:
         return err;
     }
 
+    virtual int WindowsCrtRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::microsoft::windows::crt::Thread >(argc, argv, env);
+        return err;
+    }
+    virtual int WindowsNativeRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::microsoft::windows::Thread >(argc, argv, env);
+        return err;
+    }
+    virtual int OsxRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::apple::osx::Thread >(argc, argv, env);
+        return err;
+    }
     virtual int PosixRun(int argc, char_t**argv, char_t** env) {
         int err = RunT< ::xos::mt::posix::Thread >(argc, argv, env);
+        return err;
+    }
+    virtual int OsRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::os::Thread >(argc, argv, env);
         return err;
     }
     virtual int DerivedRun(int argc, char_t**argv, char_t** env) {

@@ -302,10 +302,14 @@ public:
         return false;
     }
     virtual Attached DetachCreated(bool& isCreated) {
-        Attached detached = Extends::DetachCreated(isCreated);
         IS_ERR_LOGGED_DEBUG("this->SetIsForked(false)...");
         this->SetIsForked(false);
-        return detached;
+        return Extends::DetachCreated(isCreated);
+    }
+    virtual Attached Detach() {
+        IS_ERR_LOGGED_DEBUG("this->SetIsForked(false)...");
+        this->SetIsForked(false);
+        return Extends::Detach();
     }
 
     ///////////////////////////////////////////////////////////////////////

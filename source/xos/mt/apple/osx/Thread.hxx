@@ -28,6 +28,8 @@ namespace mt {
 namespace apple {
 namespace osx {
 
+typedef posix::Thread Thread;
+
 } /// namespace osx
 } /// namespace apple
 } /// namespace mt

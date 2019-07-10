@@ -87,7 +87,10 @@ protected:
     virtual int OsxRun(int argc, char_t**argv, char_t** env) {
         return DerivedRun(argc, argv, env);
     }
-    virtual int WindowsRun(int argc, char_t**argv, char_t** env) {
+    virtual int WindowsCrtRun(int argc, char_t**argv, char_t** env) {
+        return DerivedRun(argc, argv, env);
+    }
+    virtual int WindowsNativeRun(int argc, char_t**argv, char_t** env) {
         return DerivedRun(argc, argv, env);
     }
 
