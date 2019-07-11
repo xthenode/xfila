@@ -13,48 +13,15 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Locked.hxx
+///   File: Acquired.cxx
 ///
 /// Author: $author$
-///   Date: 6/20/2019
+///   Date: 7/11/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LOCKED_HXX_
-#define _XOS_MT_LOCKED_HXX_
-
-#include "xos/mt/os/Mutex.hxx"
-#include "xos/mt/posix/Mutex.hxx"
-#include "xos/mt/apple/osx/Mutex.hxx"
-#include "xos/mt/microsoft/windows/Mutex.hxx"
+#include "xos/mt/Acquired.hxx"
 
 namespace xos {
 namespace mt {
 
-///////////////////////////////////////////////////////////////////////
-///  Class: LockedT
-///////////////////////////////////////////////////////////////////////
-template 
-<class TExtends = os::Mutex, 
- class TImplements = typename TExtends::Implements>
-
-class _EXPORT_CLASS LockedT: virtual public TImplements, public TExtends {
-public:
-    typedef TImplements Implements;
-    typedef TExtends Extends;
-
-    LockedT(bool isLogged, bool isErrLogged): Extends(isLogged, isErrLogged) {
-    }
-    LockedT(bool isLogged): Extends(isLogged) {
-    }
-    LockedT(const LockedT &copy): Extends(copy) {
-    }
-    LockedT() {
-    }
-    virtual ~LockedT() {
-    }
-};
-typedef LockedT<> Locked;
-
 } /// namespace mt
 } /// namespace xos
-
-#endif /// _XOS_MT_LOCKED_HXX_

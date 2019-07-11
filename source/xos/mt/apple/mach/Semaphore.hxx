@@ -139,6 +139,25 @@ public:
     virtual AcquireStatus UntimedAcquireDetached(Attached detached) const { 
         if (((Attached)Unattached) != detached) {
             semaphore_t& semaphore = *detached;
+            int err = 0;
+
+            IS_ERR_LOGGED_DEBUG("::semaphore_wait(semaphore)...");
+            if (KERN_SUCCESS == (err = ::semaphore_wait(semaphore))) {
+                IS_ERR_LOGGED_DEBUG("...::semaphore_wait(semaphore)");
+                return AcquireSuccess;
+            } else {
+                if (KERN_OPERATION_TIMED_OUT == (err)) {
+                    IS_ERR_LOGGED_ERROR("...failed KERN_OPERATION_TIMED_OUT err = " << err << " on ::semaphore_wait(semaphore)");
+                    return AcquireBusy;
+                } else {
+                    if (KERN_ABORTED == (err)) {
+                        IS_ERR_LOGGED_ERROR("...failed KERN_ABORTED err = " << err << " on ::semaphore_wait(semaphore)");
+                        return AcquireInterrupted;
+                    } else {
+                        IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::semaphore_wait(semaphore)");
+                    }
+                }
+            }
         }
         return AcquireFailed; 
     }

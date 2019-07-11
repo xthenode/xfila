@@ -13,48 +13,49 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Locked.hxx
+///   File: MainOpt.hxx
 ///
 /// Author: $author$
-///   Date: 6/20/2019
+///   Date: 7/11/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LOCKED_HXX_
-#define _XOS_MT_LOCKED_HXX_
+#ifndef _XOS_APP_CONSOLE_MT_ACQUIRED_MAINOPT_HXX_
+#define _XOS_APP_CONSOLE_MT_ACQUIRED_MAINOPT_HXX_
 
-#include "xos/mt/os/Mutex.hxx"
-#include "xos/mt/posix/Mutex.hxx"
-#include "xos/mt/apple/osx/Mutex.hxx"
-#include "xos/mt/microsoft/windows/Mutex.hxx"
+#include "xos/app/console/mt/Main.hxx"
 
 namespace xos {
+namespace app {
+namespace console {
 namespace mt {
+namespace acquired {
 
 ///////////////////////////////////////////////////////////////////////
-///  Class: LockedT
+///  Class: MainOptT
 ///////////////////////////////////////////////////////////////////////
 template 
-<class TExtends = os::Mutex, 
- class TImplements = typename TExtends::Implements>
+<class TImplements = mt::Main::Implements, class TExtends = mt::Main>
 
-class _EXPORT_CLASS LockedT: virtual public TImplements, public TExtends {
+class _EXPORT_CLASS MainOptT: virtual public TImplements, public TExtends {
 public:
     typedef TImplements Implements;
     typedef TExtends Extends;
 
-    LockedT(bool isLogged, bool isErrLogged): Extends(isLogged, isErrLogged) {
+    MainOptT() {
     }
-    LockedT(bool isLogged): Extends(isLogged) {
+    virtual ~MainOptT() {
     }
-    LockedT(const LockedT &copy): Extends(copy) {
+private:
+    MainOptT(const MainOptT& copy) {
     }
-    LockedT() {
-    }
-    virtual ~LockedT() {
-    }
-};
-typedef LockedT<> Locked;
 
+protected:
+}; /// class _EXPORT_CLASS MainOptT
+typedef MainOptT<> MainOpt;
+
+} /// namespace acquired
 } /// namespace mt
+} /// namespace console
+} /// namespace app
 } /// namespace xos
 
-#endif /// _XOS_MT_LOCKED_HXX_
+#endif /// _XOS_APP_CONSOLE_MT_ACQUIRED_MAINOPT_HXX_
