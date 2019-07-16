@@ -13,22 +13,24 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Os.hxx
+///   File: Mutex.hxx
 ///
 /// Author: $author$
-///   Date: 6/21/2019
+///   Date: 7/12/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_OS_HXX_
-#define _XOS_MT_LINUX_OS_HXX_
+#ifndef _XOS_MT_LINUX_MUTEX_HXX_
+#define _XOS_MT_LINUX_MUTEX_HXX_
 
-#include "xos/platform/Os.hxx"
+#include "xos/mt/posix/Mutex.hxx"
 
 namespace xos {
 namespace mt {
 namespace linux {
 
+typedef posix::Mutex Mutex;
+
 } /// namespace linux
 } /// namespace mt
 } /// namespace xos
 
-#endif /// _XOS_MT_LINUX_OS_HXX_
+#endif /// _XOS_MT_LINUX_MUTEX_HXX_

@@ -18,9 +18,12 @@
 /// Author: $author$
 ///   Date: 6/22/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_APPLE_MACH_SEMAPHORE_HXX_
+#if !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_HXX_) || defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
+#if !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_HXX_) && !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
 #define _XOS_MT_APPLE_MACH_SEMAPHORE_HXX_
+#endif /// !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_HXX_) && !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
 
+#if !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
 #include "xos/mt/os/Os.hxx"
 #include "xos/mt/Semaphore.hxx"
 
@@ -32,6 +35,7 @@ namespace xos {
 namespace mt {
 namespace apple {
 namespace mach {
+#endif /// !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
 
 ///////////////////////////////////////////////////////////////////////
 ///  Class: SemaphoreT
@@ -228,9 +232,11 @@ protected:
 }; /// class _EXPORT_CLASS SemaphoreT
 typedef SemaphoreT<> Semaphore;
 
+#if !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
 } /// namespace mach
 } /// namespace apple
 } /// namespace mt
 } /// namespace xos
+#endif /// !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)
 
-#endif /// _XOS_MT_APPLE_MACH_SEMAPHORE_HXX_
+#endif /// !defined(_XOS_MT_APPLE_MACH_SEMAPHORE_HXX_) || defined(_XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_)

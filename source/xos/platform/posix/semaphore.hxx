@@ -13,22 +13,22 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Os.hxx
+///   File: semaphore.hxx
 ///
 /// Author: $author$
-///   Date: 6/21/2019
+///   Date: 5/11/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_OS_HXX_
-#define _XOS_MT_LINUX_OS_HXX_
+#ifndef _XOS_PLATFORM_POSIX_SEMAPHORE_HXX_
+#define _XOS_PLATFORM_POSIX_SEMAPHORE_HXX_
 
-#include "xos/platform/Os.hxx"
+#include "xos/platform/Posix.hxx"
 
 namespace xos {
-namespace mt {
-namespace linux {
+namespace platform {
+namespace posix {
 
-} /// namespace linux
-} /// namespace mt
+} /// namespace posix
+} /// namespace platform
 } /// namespace xos
 
-#endif /// _XOS_MT_LINUX_OS_HXX_
+#endif /// _XOS_PLATFORM_POSIX_SEMAPHORE_HXX_

@@ -13,22 +13,30 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Os.hxx
+///   File: Semaphore.hxx
 ///
 /// Author: $author$
-///   Date: 6/21/2019
+///   Date: 7/14/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_OS_HXX_
-#define _XOS_MT_LINUX_OS_HXX_
+#ifndef _XOS_MT_OS_APPLE_MACH_SEMAPHORE_HXX_
+#define _XOS_MT_OS_APPLE_MACH_SEMAPHORE_HXX_
 
-#include "xos/platform/Os.hxx"
+#include "xos/platform/os/apple/mach/semaphore.hxx"
 
 namespace xos {
 namespace mt {
-namespace linux {
+namespace os {
+namespace apple {
+namespace mach {
 
-} /// namespace linux
+#define _XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_
+#include "xos/mt/apple/mach/Semaphore.hxx"
+#undef _XOS_MT_APPLE_MACH_SEMAPHORE_CLASS_
+
+} /// namespace mach
+} /// namespace apple
+} /// namespace os
 } /// namespace mt
 } /// namespace xos
 
-#endif /// _XOS_MT_LINUX_OS_HXX_
+#endif /// _XOS_MT_OS_APPLE_MACH_SEMAPHORE_HXX_

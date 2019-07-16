@@ -25,7 +25,7 @@
 #include "xos/base/Ran.hxx"
 #include "xos/base/Suspended.hxx"
 #include "xos/base/Joined.hxx"
-#include "xos/base/logged.hxx"
+#include "xos/base/Logged.hxx"
 #include "xos/base/Created.hxx"
 
 #if !defined(XOS_MT_THREAD_CREATED)

@@ -13,22 +13,27 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Os.hxx
+///   File: task.hxx
 ///
 /// Author: $author$
-///   Date: 6/21/2019
+///   Date: 7/14/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_OS_HXX_
-#define _XOS_MT_LINUX_OS_HXX_
+#ifndef _XOS_PLATFORM_OS_APPLE_MACH_TASK_HXX_
+#define _XOS_PLATFORM_OS_APPLE_MACH_TASK_HXX_
 
-#include "xos/platform/Os.hxx"
+#include "xos/platform/os/apple/mach/mach.hxx"
+#include "xos/platform/os/apple/mach/task.h"
 
 namespace xos {
-namespace mt {
-namespace linux {
+namespace platform {
+namespace os {
+namespace apple {
+namespace mach {
 
-} /// namespace linux
-} /// namespace mt
+} /// namespace mach
+} /// namespace apple
+} /// namespace os
+} /// namespace platform
 } /// namespace xos
 
-#endif /// _XOS_MT_LINUX_OS_HXX_
+#endif /// _XOS_PLATFORM_OS_APPLE_MACH_TASK_HXX_

@@ -1,3 +1,4 @@
+/*/
 ///////////////////////////////////////////////////////////////////////
 /// Copyright (c) 1988-2019 $organization$
 ///
@@ -13,22 +14,33 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Os.hxx
+///   File: task.h
 ///
 /// Author: $author$
-///   Date: 6/21/2019
+///   Date: 7/14/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_OS_HXX_
-#define _XOS_MT_LINUX_OS_HXX_
+/*/
+#ifndef _XOS_PLATFORM_OS_APPLE_MACH_TASK_H_
+#define _XOS_PLATFORM_OS_APPLE_MACH_TASK_H_
 
-#include "xos/platform/Os.hxx"
+#include "xos/platform/os/apple/mach/mach.h"
 
-namespace xos {
-namespace mt {
-namespace linux {
+#if defined(APPLEOS)
+#define task_t platform_task_t
+#define mach_task_self platform_mach_task_self
+#else /// defined(APPLEOS)
+#endif /// defined(APPLEOS)
 
-} /// namespace linux
-} /// namespace mt
-} /// namespace xos
+typedef mach_port_t task_t;
 
-#endif /// _XOS_MT_LINUX_OS_HXX_
+#if defined(__cplusplus)
+extern "C" {
+#endif /*/ defined(__cplusplus) /*/
+
+extern mach_port_t	mach_task_self();
+
+#if defined(__cplusplus)
+} /*/ extern "C" /*/
+#endif /*/ defined(__cplusplus) /*/
+
+#endif /*/ _XOS_PLATFORM_OS_APPLE_MACH_TASK_H_ /*/

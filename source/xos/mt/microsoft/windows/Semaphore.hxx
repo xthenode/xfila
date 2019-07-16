@@ -33,7 +33,7 @@ namespace windows {
 ///  Class: SemaphoreT
 ///////////////////////////////////////////////////////////////////////
 template 
-<typename TError = kern_return_t, TError VErrorSuccess = 0, TError VErrorFailed = -1,
+<typename TError = int, TError VErrorSuccess = 0, TError VErrorFailed = -1,
  typename TAttached = HANDLE, typename TUnattached = int, TUnattached VUnattached = 0,
  class TImplement = implemented::SemaphoreT<TAttached, TUnattached, VUnattached>,
  class TSemaphore = extended::SemaphoreT

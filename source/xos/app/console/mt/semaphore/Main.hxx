@@ -27,6 +27,7 @@
 #include "xos/mt/apple/osx/Semaphore.hxx"
 #include "xos/mt/posix/Semaphore.hxx"
 #include "xos/mt/os/Semaphore.hxx"
+#include "xos/mt/os/apple/mach/Semaphore.hxx"
 #include "xos/app/console/mt/semaphore/MainOpt.hxx"
 
 namespace xos {

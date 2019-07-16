@@ -1,3 +1,4 @@
+/*/
 ///////////////////////////////////////////////////////////////////////
 /// Copyright (c) 1988-2019 $organization$
 ///
@@ -13,22 +14,15 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Os.hxx
+///   File: thread.h
 ///
 /// Author: $author$
-///   Date: 6/21/2019
+///   Date: 6/4/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_OS_HXX_
-#define _XOS_MT_LINUX_OS_HXX_
+/*/
+#ifndef _XOS_PLATFORM_POSIX_MICROSOFT_WINDOWS_THREAD_H_
+#define _XOS_PLATFORM_POSIX_MICROSOFT_WINDOWS_THREAD_H_
 
-#include "xos/platform/Os.hxx"
+#include "xos/platform/Posix.h"
 
-namespace xos {
-namespace mt {
-namespace linux {
-
-} /// namespace linux
-} /// namespace mt
-} /// namespace xos
-
-#endif /// _XOS_MT_LINUX_OS_HXX_
+#endif /*/ _XOS_PLATFORM_POSIX_MICROSOFT_WINDOWS_THREAD_H_ /*/
