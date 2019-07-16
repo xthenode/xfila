@@ -54,7 +54,9 @@ $${xfila_DEFINES} \
 #
 semaphore_HEADERS += \
 $${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/apple/mach/semaphore.hxx \
 $${XFILA_SRC}/xos/platform/os/posix/semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/posix/apple/mach/semaphore.hxx \
 $${XFILA_SRC}/xos/platform/os/Semaphores.hxx \
 \
 $${XFILA_SRC}/xos/mt/microsoft/windows/Semaphore.hxx \
@@ -63,6 +65,7 @@ $${XFILA_SRC}/xos/mt/apple/mach/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/apple/osx/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/posix/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/os/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/os/apple/mach/Semaphore.hxx \
 \
 $${XFILA_SRC}/xos/app/console/mt/semaphore/MainOpt.hxx \
 $${XFILA_SRC}/xos/app/console/mt/semaphore/Main.hxx \

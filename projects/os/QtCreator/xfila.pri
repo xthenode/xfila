@@ -53,6 +53,14 @@ XOS_LIB = $${XOS_PKG_BLD}/lib
 #XOS_LIB = $${XOS_PRJ_BLD}/lib
 #XOS_LIB = $${XFILA_LIB}
 
+# xos INCLUDEPATH
+#
+contains(XFILA_OS,windows|linux) {
+} else {
+xos_INCLUDEPATH += \
+$${XOS_SRC}/xos/platform/posix/apple
+} # contains(XFILA_OS,linux)
+
 # xos LIBS
 #
 xos_LIBS += \
