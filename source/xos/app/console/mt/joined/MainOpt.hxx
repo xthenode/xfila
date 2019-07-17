@@ -13,24 +13,49 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Thread.hxx
+///   File: MainOpt.hxx
 ///
 /// Author: $author$
-///   Date: 7/12/2019
+///   Date: 7/17/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_THREAD_HXX_
-#define _XOS_MT_LINUX_THREAD_HXX_
+#ifndef _XOS_APP_CONSOLE_MT_JOINED_MAINOPT_HXX_
+#define _XOS_APP_CONSOLE_MT_JOINED_MAINOPT_HXX_
 
-#include "xos/mt/posix/Thread.hxx"
+#include "xos/app/console/mt/Main.hxx"
 
 namespace xos {
+namespace app {
+namespace console {
 namespace mt {
-namespace linux {
+namespace joined {
 
-typedef posix::Thread Thread;
+///////////////////////////////////////////////////////////////////////
+///  Class: MainOptT
+///////////////////////////////////////////////////////////////////////
+template 
+<class TImplements = mt::Main::Implements, class TExtends = mt::Main>
 
-} /// namespace linux
+class _EXPORT_CLASS MainOptT: virtual public TImplements, public TExtends {
+public:
+    typedef TImplements Implements;
+    typedef TExtends Extends;
+
+    MainOptT() {
+    }
+    virtual ~MainOptT() {
+    }
+private:
+    MainOptT(const MainOptT& copy) {
+    }
+
+protected:
+}; /// class _EXPORT_CLASS MainOptT
+typedef MainOptT<> MainOpt;
+
+} /// namespace joined
 } /// namespace mt
+} /// namespace console
+} /// namespace app
 } /// namespace xos
 
-#endif /// _XOS_MT_LINUX_THREAD_HXX_
+#endif /// _XOS_APP_CONSOLE_MT_JOINED_MAINOPT_HXX_

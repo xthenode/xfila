@@ -25,6 +25,7 @@
 #include "xos/mt/microsoft/windows/Semaphore.hxx"
 #include "xos/mt/apple/mach/Semaphore.hxx"
 #include "xos/mt/apple/osx/Semaphore.hxx"
+#include "xos/mt/linux/Semaphore.hxx"
 #include "xos/mt/posix/Semaphore.hxx"
 #include "xos/mt/os/Semaphore.hxx"
 #include "xos/mt/os/apple/mach/Semaphore.hxx"
@@ -110,6 +111,7 @@ protected:
         }
         return err;
     }
+
     virtual int DerivedRun(int argc, char_t**argv, char_t** env) {
         int err = RunT< ::xos::mt::derived::Semaphore >(argc, argv, env);
         return err;
@@ -124,6 +126,10 @@ protected:
     }
     virtual int PosixRun(int argc, char_t**argv, char_t** env) {
         int err = RunT< ::xos::mt::posix::Semaphore >(argc, argv, env);
+        return err;
+    }
+    virtual int LinuxRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::linux::Semaphore >(argc, argv, env);
         return err;
     }
     virtual int OsRun(int argc, char_t**argv, char_t** env) {

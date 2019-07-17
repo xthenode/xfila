@@ -13,24 +13,15 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Thread.hxx
+///   File: Joined.cxx
 ///
 /// Author: $author$
-///   Date: 7/12/2019
+///   Date: 7/17/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_MT_LINUX_THREAD_HXX_
-#define _XOS_MT_LINUX_THREAD_HXX_
-
-#include "xos/mt/posix/Thread.hxx"
+#include "xos/mt/Joined.hxx"
 
 namespace xos {
 namespace mt {
-namespace linux {
 
-typedef posix::Thread Thread;
-
-} /// namespace linux
 } /// namespace mt
 } /// namespace xos
-
-#endif /// _XOS_MT_LINUX_THREAD_HXX_
