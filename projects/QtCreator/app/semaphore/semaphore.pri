@@ -67,6 +67,9 @@ $${XFILA_SRC}/xos/mt/posix/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/os/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/os/apple/mach/Semaphore.hxx \
 \
+$${XFILA_SRC}/xos/app/console/mt/MainOpt.hxx \
+$${XFILA_SRC}/xos/app/console/mt/Main.hxx \
+\
 $${XFILA_SRC}/xos/app/console/mt/semaphore/MainOpt.hxx \
 $${XFILA_SRC}/xos/app/console/mt/semaphore/Main.hxx \
 

@@ -13,80 +13,64 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: mutex.pri
+#   File: joined.pri
 #
 # Author: $author$
-#   Date: 6/20/2019
+#   Date: 7/17/2019
 #
-# QtCreator .pri file for xfila executable mutex
+# QtCreator .pri file for xfila executable joined
 ########################################################################
 
 ########################################################################
-# mutex
+# joined
 
-# mutex TARGET
+# joined TARGET
 #
-mutex_TARGET = mutex
+joined_TARGET = joined
 
-# mutex INCLUDEPATH
+# joined INCLUDEPATH
 #
-mutex_INCLUDEPATH += \
+joined_INCLUDEPATH += \
 $${xfila_INCLUDEPATH} \
 
-# mutex DEFINES
+# joined DEFINES
 #
-mutex_DEFINES += \
+joined_DEFINES += \
 $${xfila_DEFINES} \
 
 ########################################################################
-# mutex OBJECTIVE_HEADERS
+# joined OBJECTIVE_HEADERS
 #
-#mutex_OBJECTIVE_HEADERS += \
+#joined_OBJECTIVE_HEADERS += \
 #$${XFILA_SRC}/xfila/base/Base.hh \
 
-# mutex OBJECTIVE_SOURCES
+# joined OBJECTIVE_SOURCES
 #
-#mutex_OBJECTIVE_SOURCES += \
+#joined_OBJECTIVE_SOURCES += \
 #$${XFILA_SRC}/xfila/base/Base.mm \
 
 ########################################################################
-# mutex HEADERS
+# joined HEADERS
 #
-mutex_HEADERS += \
-$${XFILA_SRC}/xos/mt/os/Os.hxx \
-\
-$${XFILA_SRC}/xos/mt/Mutex.hxx \
-$${XFILA_SRC}/xos/mt/posix/Mutex.hxx \
-$${XFILA_SRC}/xos/mt/apple/osx/Mutex.hxx \
-$${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.hxx \
-$${XFILA_SRC}/xos/mt/os/Mutex.hxx \
-\
-$${XFILA_SRC}/xos/app/console/mt/MainOpt.hxx \
-$${XFILA_SRC}/xos/app/console/mt/Main.hxx \
-\
-$${XFILA_SRC}/xos/app/console/mt/mutex/MainOpt.hxx \
-$${XFILA_SRC}/xos/app/console/mt/mutex/Main.hxx \
+joined_HEADERS += \
+$${XFILA_SRC}/xos/app/console/mt/joined/MainOpt.hxx \
+$${XFILA_SRC}/xos/app/console/mt/joined/Main.hxx \
 
-# mutex SOURCES
+# joined SOURCES
 #
-mutex_SOURCES += \
-$${XFILA_SRC}/xos/mt/os/Os.cxx \
-$${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.cxx \
-\
-$${XFILA_SRC}/xos/app/console/mt/mutex/MainOpt.cxx \
-$${XFILA_SRC}/xos/app/console/mt/mutex/Main.cxx \
-
-_mutex_SOURCES += \
+joined_SOURCES += \
+$${XFILA_SRC}/xos/app/console/mt/joined/MainOpt.cxx \
+$${XFILA_SRC}/xos/app/console/mt/joined/Main.cxx \
 
 ########################################################################
-# mutex FRAMEWORKS
+# joined FRAMEWORKS
 #
-mutex_FRAMEWORKS += \
+joined_FRAMEWORKS += \
 $${xfila_FRAMEWORKS} \
 
-# mutex LIBS
+# joined LIBS
 #
-mutex_LIBS += \
+joined_LIBS += \
 $${xfila_LIBS} \
 
 
