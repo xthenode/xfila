@@ -72,7 +72,11 @@ xos_LIBS += \
 
 # xfila INCLUDEPATH
 #
+contains(XFILA_OS,solaris) {
+} else {
 xfila_INCLUDEPATH += \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris
+} # contains(XFILA_OS,solaris)
 
 # xfila DEFINES
 #

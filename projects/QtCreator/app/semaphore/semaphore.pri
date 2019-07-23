@@ -53,14 +53,36 @@ $${xfila_DEFINES} \
 # semaphore HEADERS
 #
 semaphore_HEADERS += \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.cxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutexes.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutexes.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphore.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphore.cxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphores.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphores.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.hxx \
 $${XFILA_SRC}/xos/platform/os/apple/mach/semaphore.hxx \
 $${XFILA_SRC}/xos/platform/os/posix/semaphore.hxx \
 $${XFILA_SRC}/xos/platform/os/posix/apple/mach/semaphore.hxx \
 $${XFILA_SRC}/xos/platform/os/Semaphores.hxx \
 \
-$${XFILA_SRC}/xos/mt/microsoft/windows/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/microsoft/windows/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/apple/mach/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/apple/osx/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/posix/Semaphore.hxx \

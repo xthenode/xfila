@@ -53,10 +53,24 @@ $${xfila_DEFINES} \
 # mutex HEADERS
 #
 mutex_HEADERS += \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.cxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.cxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.cxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutexes.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutexes.cxx \
+\
 $${XFILA_SRC}/xos/mt/os/Os.hxx \
 \
 $${XFILA_SRC}/xos/mt/Mutex.hxx \
 $${XFILA_SRC}/xos/mt/posix/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Mutex.hxx \
 $${XFILA_SRC}/xos/mt/apple/osx/Mutex.hxx \
 $${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.hxx \
 $${XFILA_SRC}/xos/mt/os/Mutex.hxx \
@@ -70,6 +84,9 @@ $${XFILA_SRC}/xos/app/console/mt/mutex/Main.hxx \
 # mutex SOURCES
 #
 mutex_SOURCES += \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutexes.cxx \
+\
 $${XFILA_SRC}/xos/mt/os/Os.cxx \
 $${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.cxx \
 \
