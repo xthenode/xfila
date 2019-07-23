@@ -13,25 +13,26 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Semaphores.cxx
+///   File: semaphore.hxx
 ///
 /// Author: $author$
-///   Date: 6/24/2019
+///   Date: 7/23/2019
 ///////////////////////////////////////////////////////////////////////
-#include "xos/platform/os/Semaphores.hxx"
-#include "xos/platform/os/microsoft/windows/Semaphore.cxx"
-#include "xos/platform/os/oracle/solaris/semaphores.cxx"
-#include "xos/platform/os/apple/mach/semaphore.cxx"
-#include "xos/platform/os/posix/semaphore.cxx"
+#ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
+#define _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
 
-#if defined(APPLEOS)
-#include "xos/platform/posix/apple/mach/semaphore.cxx"
-#endif /// defined(APPLEOS)
+#include "xos/base/Base.hxx"
 
 namespace xos {
 namespace platform {
 namespace os {
+namespace oracle {
+namespace solaris {
 
+} /// namespace solaris
+} /// namespace oracle
 } /// namespace os
 } /// namespace platform
 } /// namespace xos
+
+#endif /// _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_

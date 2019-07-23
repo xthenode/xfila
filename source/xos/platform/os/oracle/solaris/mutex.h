@@ -1,3 +1,4 @@
+/*/
 ///////////////////////////////////////////////////////////////////////
 /// Copyright (c) 1988-2019 $organization$
 ///
@@ -13,25 +14,43 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Semaphores.cxx
+///   File: mutex.h
 ///
 /// Author: $author$
-///   Date: 6/24/2019
+///   Date: 7/21/2019
 ///////////////////////////////////////////////////////////////////////
-#include "xos/platform/os/Semaphores.hxx"
-#include "xos/platform/os/microsoft/windows/Semaphore.cxx"
-#include "xos/platform/os/oracle/solaris/semaphores.cxx"
-#include "xos/platform/os/apple/mach/semaphore.cxx"
-#include "xos/platform/os/posix/semaphore.cxx"
+/*/
+#ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_MUTEX_H_
+#define _XOS_PLATFORM_OS_ORACLE_SOLARIS_MUTEX_H_
 
-#if defined(APPLEOS)
-#include "xos/platform/posix/apple/mach/semaphore.cxx"
-#endif /// defined(APPLEOS)
+#include "xos/platform/Os.h"
 
-namespace xos {
-namespace platform {
-namespace os {
+#if defined(SOLARIS)
+#else /*/ defined(SOLARIS) /*/
+#endif /*/ defined(SOLARIS) /*/
 
-} /// namespace os
-} /// namespace platform
-} /// namespace xos
+#if defined(__cplusplus)
+extern "C" {
+#endif /*/ defined(__cplusplus) /*/
+
+typedef void* mutex_t;
+enum {
+    USYNC_THREAD,
+    USYNC_PROCESS,
+    LOCK_ROBUST,
+    LOCK_RECURSIVE,
+    LOCK_ERRORCHECK,
+    LOCK_PRIO_INHERIT,
+    LOCK_PRIO_PROTECT
+};
+int mutex_lock(mutex_t *mp);
+int mutex_unlock(mutex_t *mp);
+int mutex_trylock(mutex_t *mp);
+int mutex_init(mutex_t *mp, int type, void *arg);
+int mutex_destroy(mutex_t *mp);
+
+#if defined(__cplusplus)
+} /*/ extern "C" /*/
+#endif /*/ defined(__cplusplus) /*/
+
+#endif /*/ _XOS_PLATFORM_OS_ORACLE_SOLARIS_MUTEX_H_ /*/

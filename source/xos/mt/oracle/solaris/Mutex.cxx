@@ -13,25 +13,19 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Semaphores.cxx
+///   File: Mutex.cxx
 ///
 /// Author: $author$
-///   Date: 6/24/2019
+///   Date: 7/21/2019
 ///////////////////////////////////////////////////////////////////////
-#include "xos/platform/os/Semaphores.hxx"
-#include "xos/platform/os/microsoft/windows/Semaphore.cxx"
-#include "xos/platform/os/oracle/solaris/semaphores.cxx"
-#include "xos/platform/os/apple/mach/semaphore.cxx"
-#include "xos/platform/os/posix/semaphore.cxx"
-
-#if defined(APPLEOS)
-#include "xos/platform/posix/apple/mach/semaphore.cxx"
-#endif /// defined(APPLEOS)
+#include "xos/mt/oracle/solaris/Mutex.hxx"
 
 namespace xos {
-namespace platform {
-namespace os {
+namespace mt {
+namespace oracle {
+namespace solaris {
 
-} /// namespace os
-} /// namespace platform
+} /// namespace solaris
+} /// namespace oracle
+} /// namespace mt
 } /// namespace xos

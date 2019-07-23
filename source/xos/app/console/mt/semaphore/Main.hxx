@@ -23,6 +23,7 @@
 
 #include "xos/mt/Semaphore.hxx"
 #include "xos/mt/microsoft/windows/Semaphore.hxx"
+#include "xos/mt/oracle/solaris/Semaphore.hxx"
 #include "xos/mt/apple/mach/Semaphore.hxx"
 #include "xos/mt/apple/osx/Semaphore.hxx"
 #include "xos/mt/linux/Semaphore.hxx"
@@ -118,6 +119,10 @@ protected:
     }
     virtual int WindowsRun(int argc, char_t**argv, char_t** env) {
         int err = RunT< ::xos::mt::microsoft::windows::Semaphore >(argc, argv, env);
+        return err;
+    }
+    virtual int SolarisRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::oracle::solaris::Semaphore >(argc, argv, env);
         return err;
     }
     virtual int OsxRun(int argc, char_t**argv, char_t** env) {
