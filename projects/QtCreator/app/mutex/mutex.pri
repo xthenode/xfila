@@ -54,12 +54,24 @@ $${xfila_DEFINES} \
 #
 mutex_HEADERS += \
 \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.h \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.c \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.hxx \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Mutex.h \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Mutex.c \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Mutex.hxx \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Mutex.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.h \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.hxx \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.h \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.hxx \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.h \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.hxx \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.cxx \

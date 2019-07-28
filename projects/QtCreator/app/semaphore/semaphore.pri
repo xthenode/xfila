@@ -54,6 +54,14 @@ $${xfila_DEFINES} \
 #
 semaphore_HEADERS += \
 \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.h \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.hxx \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Handle.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.h \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.h \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.hxx \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.cxx \
@@ -74,10 +82,18 @@ $${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphore.cxx \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphores.hxx \
 $${XFILA_SRC}/xos/platform/os/oracle/solaris/semaphores.cxx \
 \
-$${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/apple/mach/task.h \
+$${XFILA_SRC}/xos/platform/os/apple/mach/task.hxx \
+$${XFILA_SRC}/xos/platform/os/apple/mach/task.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/apple/mach/semaphore.h \
 $${XFILA_SRC}/xos/platform/os/apple/mach/semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/apple/mach/semaphore.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/posix/semaphore.h \
 $${XFILA_SRC}/xos/platform/os/posix/semaphore.hxx \
-$${XFILA_SRC}/xos/platform/os/posix/apple/mach/semaphore.hxx \
+$${XFILA_SRC}/xos/platform/os/posix/semaphore.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/Semaphores.hxx \
 \
 $${XFILA_SRC}/xos/mt/Semaphore.hxx \
@@ -98,6 +114,8 @@ $${XFILA_SRC}/xos/app/console/mt/semaphore/Main.hxx \
 # semaphore SOURCES
 #
 semaphore_SOURCES += \
+$${XFILA_SRC}/xos/platform/os/apple/mach/task.cxx \
+\
 $${XFILA_SRC}/xos/platform/os/Semaphores.cxx \
 \
 $${XFILA_SRC}/xos/app/console/mt/semaphore/MainOpt.cxx \

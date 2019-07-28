@@ -32,7 +32,11 @@ XFILA_OS = windows
 } # contains(UNAME,Linux)
 } # contains(UNAME,Darwin)
 
+contains(BUILD_OS,XFILA_OS) {
+BUILD_OS = $${XFILA_OS}
+} else {
 BUILD_OS = os
+} # contains(BUILD_OS,XFILA_OS)
 
 #CONFIG += c++11
 #CONFIG += c++0x
@@ -56,10 +60,10 @@ XOS_LIB = $${XOS_PKG_BLD}/lib
 # xos INCLUDEPATH
 #
 contains(XFILA_OS,windows|linux) {
-} else {
 xos_INCLUDEPATH += \
-$${XOS_SRC}/xos/platform/posix/apple
-} # contains(XFILA_OS,linux)
+$${XOS_SRC}/xos/platform/os/apple
+} else {
+} # contains(XFILA_OS,windows|linux)
 
 # xos LIBS
 #
@@ -72,11 +76,12 @@ xos_LIBS += \
 
 # xfila INCLUDEPATH
 #
-contains(XFILA_OS,solaris) {
-} else {
+contains(XFILA_OS,windows|linux) {
 xfila_INCLUDEPATH += \
-$${XFILA_SRC}/xos/platform/os/oracle/solaris
-} # contains(XFILA_OS,solaris)
+$${XFILA_SRC}/xos/platform/os/apple \
+$${XOS_SRC}/xos/platform/os/apple
+} else {
+} # contains(XFILA_OS,windows|linux)
 
 # xfila DEFINES
 #
@@ -100,3 +105,7 @@ xfila_LIBS += \
 -lrt
 } else {
 } # contains(XFILA_OS,linux)
+
+contains(XFILA_OS,solaris) {
+} else {
+} # contains(XFILA_OS,solaris)
