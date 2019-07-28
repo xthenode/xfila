@@ -23,7 +23,11 @@
 
 #include "xos/mt/Semaphore.hxx"
 
+#if defined(SOLARIS)
 #include <synch.h>
+#else /// defined(SOLARIS)
+#include "xos/platform/os/oracle/solaris/synch.h"
+#endif /// defined(SOLARIS)
 
 namespace xos {
 namespace mt {
@@ -45,10 +49,6 @@ class _EXPORT_CLASS SemaphoreT: virtual public TImplements, public TExtends {
 public:
     typedef TImplements Implements;
     typedef TExtends Extends;
-
-    typedef typename Extends::Error Error;
-    static const Error ErrorSuccess = Extends::ErrorSuccess;
-    static const Error ErrorFailed = Extends::ErrorFailed;
 
     typedef typename Extends::Attached Attached;
     static const typename Extends::UnattachedT Unattached = Extends::Unattached;
@@ -133,7 +133,12 @@ public:
                     IS_ERR_LOGGED_TRACE("...failed EBUSY err = " << err << " on ::sema_trywait(detached)");
                     return AcquireBusy;
                 } else {
-                    IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sema_trywait(detached)");
+                    if (EINTR == (err)) {
+                        IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sema_trywait(detached)");
+                        return AcquireInterrupted;
+                    } else {
+                        IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sema_trywait(detached)");
+                    }
                 }
             }
         }

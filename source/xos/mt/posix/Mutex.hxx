@@ -62,6 +62,26 @@ inline int pthread_mutex_timedlock
 #else /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
 #endif /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
 
+#if !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+inline int pthread_mutex_timedlock_relative_np
+(pthread_mutex_t *mutex, const struct timespec *timeout) {
+#if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
+    if ((mutex) && (timeout)) {
+        int err = 0; struct timespec untilTime;
+        if (!(err = ::clock_gettime(CLOCK_REALTIME, &untilTime))) {
+            untilTime.tv_sec +=  timeout->tv_sec;
+            untilTime.tv_nsec +=  timeout->tv_nsec;
+            err = ::pthread_mutex_timedlock(mutex, &untilTime);
+        }
+        return err;
+    }
+#endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
+    return EINVAL;
+}
+#define PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP
+#else /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+#endif /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+
 namespace xos {
 namespace mt {
 namespace posix {
@@ -81,10 +101,6 @@ class _EXPORT_CLASS MutexT: virtual public TImplements, public TExtends {
 public:
     typedef TImplements Implements;
     typedef TExtends Extends;
-
-    typedef typename Extends::Error Error;
-    static const Error ErrorSuccess = Extends::ErrorSuccess;
-    static const Error ErrorFailed = Extends::ErrorFailed;
 
     typedef typename Extends::Attached Attached;
     static const typename Extends::UnattachedT Unattached = Extends::Unattached;
@@ -169,7 +185,7 @@ public:
             const char* _relative_np = "";
 #endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
             bool isLogged = ((this->IsLogged()) && (milliseconds >= this->TimedLoggedThreasholdMilliseconds()));
-            Error error = 0;
+            int err = 0;
             struct timespec untilTime;
 
 #if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
@@ -185,23 +201,26 @@ public:
 
             IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)...");
 #if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            error = ::pthread_mutex_timedlock_relative_np(&mutex, &untilTime);
+            err = ::pthread_mutex_timedlock_relative_np(&mutex, &untilTime);
 #else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            error = ::pthread_mutex_timedlock(&mutex, &untilTime);
+            err = ::pthread_mutex_timedlock(&mutex, &untilTime);
 #endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            if ((error)) {
-                switch(error) {
+            if ((err)) {
+                switch(err) {
+                case EAGAIN:
+                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...EAGAIN err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    return LockBusy;
                 case EBUSY:
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...EBUSY error = "<< error << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...EBUSY err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
                     return LockBusy;
                 case ETIMEDOUT:
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...ETIMEDOUT error = "<< error << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...ETIMEDOUT err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
                     return LockBusy;
                 case EINTR:
-                    IS_ERR_LOGGED_ERROR("...EINTR error = "<< error << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
                     return LockInterrupted;
                 default:
-                    IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
                     return LockFailed;
                 }
             } else {
@@ -218,21 +237,24 @@ public:
         return LockFailed; 
     }
     virtual LockStatus TryLockDetached(pthread_mutex_t& mutex) const { 
-        Error error = 0;
+        int err = 0;
         IS_ERR_LOGGED_TRACE("::pthread_mutex_trylock(&mutex)...");
-        if ((error = ::pthread_mutex_trylock(&mutex))) {
-            switch(error) {
+        if ((err = ::pthread_mutex_trylock(&mutex))) {
+            switch(err) {
+            case EAGAIN:
+                IS_ERR_LOGGED_TRACE("...EAGAIN err = "<< err << " on ::pthread_mutex_trylock(&mutex)");
+                return LockBusy;
             case EBUSY:
-                IS_ERR_LOGGED_TRACE("...EBUSY error = "<< error << " on ::pthread_mutex_trylock(&mutex)");
+                IS_ERR_LOGGED_TRACE("...EBUSY err = "<< err << " on ::pthread_mutex_trylock(&mutex)");
                 return LockBusy;
             case ETIMEDOUT:
-                IS_ERR_LOGGED_TRACE("...ETIMEDOUT error = "<< error << " on ::pthread_mutex_trylock(&mutex)");
+                IS_ERR_LOGGED_TRACE("...ETIMEDOUT err = "<< err << " on ::pthread_mutex_trylock(&mutex)");
                 return LockBusy;
             case EINTR:
-                IS_ERR_LOGGED_ERROR("...EINTR error = "<< error << " on ::pthread_mutex_trylock(&mutex)");
+                IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on ::pthread_mutex_trylock(&mutex)");
                 return LockInterrupted;
             default:
-                IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutex_trylock(&mutex)");
+                IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_trylock(&mutex)");
                 return LockFailed;
             }
         } else {
@@ -242,21 +264,24 @@ public:
         return LockFailed; 
     }
     virtual LockStatus UntimedLockDetached(pthread_mutex_t& mutex) const { 
-        Error error = 0;
+        int err = 0;
         IS_LOGGED_DEBUG("::pthread_mutex_lock(&mutex)...");
-        if ((error = ::pthread_mutex_lock(&mutex))) {
-            switch(error) {
+        if ((err = ::pthread_mutex_lock(&mutex))) {
+            switch(err) {
+            case EAGAIN:
+                IS_ERR_LOGGED_ERROR("...EAGAIN err = "<< err << " on ::pthread_mutex_lock(&mutex)");
+                return LockFailed;
             case EBUSY:
-                IS_ERR_LOGGED_ERROR("...EBUSY error = "<< error << " on ::pthread_mutex_lock(&mutex)");
-                return LockBusy;
+                IS_ERR_LOGGED_ERROR("...EBUSY err = "<< err << " on ::pthread_mutex_lock(&mutex)");
+                return LockFailed;
             case ETIMEDOUT:
-                IS_ERR_LOGGED_ERROR("...ETIMEDOUT error = "<< error << " on ::pthread_mutex_lock(&mutex)");
-                return LockBusy;
+                IS_ERR_LOGGED_ERROR("...ETIMEDOUT err = "<< err << " on ::pthread_mutex_lock(&mutex)");
+                return LockFailed;
             case EINTR:
-                IS_ERR_LOGGED_ERROR("...EINTR error = "<< error << " on ::pthread_mutex_lock(&mutex)");
+                IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on ::pthread_mutex_lock(&mutex)");
                 return LockInterrupted;
             default:
-                IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutex_lock(&mutex)");
+                IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_lock(&mutex)");
                 return LockFailed;
             }
         } else {
@@ -266,12 +291,12 @@ public:
         return LockFailed; 
     }
     virtual bool UnlockDetached(pthread_mutex_t& mutex) const { 
-        Error error = 0;
+        int err = 0;
         IS_LOGGED_DEBUG("::pthread_mutex_unlock(&mutex)...");
-        if (!(error = ::pthread_mutex_unlock(&mutex))) {
+        if (!(err = ::pthread_mutex_unlock(&mutex))) {
             return true;
         } else {
-            IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutex_unlock(&mutex)");
+            IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_unlock(&mutex)");
         }
         return false; 
     }
@@ -287,37 +312,37 @@ public:
     }
     virtual Attached CreateDetached(pthread_mutex_t& mutex) const {
         Attached detached = ((Attached)Unattached);
-        Error error = 0;
+        int err = 0;
         pthread_mutexattr_t mutexattr;
 
         IS_ERR_LOGGED_DEBUG("::pthread_mutexattr_init(&mutexattr)...");
-        if (!(error = ::pthread_mutexattr_init(&mutexattr))) {
+        if (!(err = ::pthread_mutexattr_init(&mutexattr))) {
             IS_ERR_LOGGED_DEBUG("::pthread_mutex_init(&mutex, &mutexattr)...");
-            if (!(error = ::pthread_mutex_init(&mutex, &mutexattr))) {
+            if (!(err = ::pthread_mutex_init(&mutex, &mutexattr))) {
                 detached = &mutex;
             } else {
-                IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutex_init(&mutex, &mutexattr)");
+                IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_init(&mutex, &mutexattr)");
             }
             IS_ERR_LOGGED_DEBUG("::pthread_mutexattr_destroy(&mutexattr)...");
-            if ((error = ::pthread_mutexattr_destroy(&mutexattr))) {
-                IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutexattr_destroy(&mutexattr)");
+            if ((err = ::pthread_mutexattr_destroy(&mutexattr))) {
+                IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutexattr_destroy(&mutexattr)");
                 detached = ((Attached)Unattached);
                 IS_ERR_LOGGED_DEBUG("::pthread_mutex_destroy(&mutex)...");
-                if ((error = ::pthread_mutex_destroy(&mutex))) {
-                    IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutex_destroy(&mutex)");
+                if ((err = ::pthread_mutex_destroy(&mutex))) {
+                    IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_destroy(&mutex)");
                 }
             }
         } else {
-            IS_ERR_LOGGED_ERROR("...failed error = "<< error << " on ::pthread_mutexattr_init(&mutexattr)");
+            IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutexattr_init(&mutexattr)");
         }
         return detached;
     }
     virtual bool DestroyDetached(Attached detached) const {
         if (((Attached)Unattached) != detached) {
-            Error error = 0;
+            int err = 0;
             IS_ERR_LOGGED_DEBUG("::pthread_mutex_destroy(detached)...");
-            if (((error = ::pthread_mutex_destroy(detached)))) {
-                IS_ERR_LOGGED_ERROR("...failed error = "<< error << " ::pthread_mutex_destroy(detached)");
+            if (((err = ::pthread_mutex_destroy(detached)))) {
+                IS_ERR_LOGGED_ERROR("...failed err = "<< err << " ::pthread_mutex_destroy(detached)");
             } else {
                 IS_ERR_LOGGED_DEBUG("...::pthread_mutex_destroy(detached)");
                 return true;

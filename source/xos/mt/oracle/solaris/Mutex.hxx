@@ -23,8 +23,12 @@
 
 #include "xos/mt/Mutex.hxx"
 
+#if defined(SOLARIS)
 #include <thread.h> 
 #include <synch.h>
+#else /// defined(SOLARIS)
+#include "xos/platform/os/oracle/solaris/mutex.h"
+#endif /// defined(SOLARIS)
 
 namespace xos {
 namespace mt {
@@ -46,10 +50,6 @@ class _EXPORT_CLASS MutexT: virtual public TImplements, public TExtends {
 public:
     typedef TImplements Implements;
     typedef TExtends Extends;
-
-    typedef typename Extends::Error Error;
-    static const Error ErrorSuccess = Extends::ErrorSuccess;
-    static const Error ErrorFailed = Extends::ErrorFailed;
 
     typedef typename Extends::Attached Attached;
     static const typename Extends::UnattachedT Unattached = Extends::Unattached;

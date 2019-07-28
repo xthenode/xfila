@@ -37,7 +37,7 @@ typedef mach_port_t task_t;
 extern "C" {
 #endif /*/ defined(__cplusplus) /*/
 
-extern mach_port_t	mach_task_self();
+extern mach_port_t mach_task_self();
 
 #if defined(__cplusplus)
 } /*/ extern "C" /*/

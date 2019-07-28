@@ -1,3 +1,4 @@
+/*/
 ///////////////////////////////////////////////////////////////////////
 /// Copyright (c) 1988-2019 $organization$
 ///
@@ -13,26 +14,15 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: semaphore.hxx
+///   File: Handle.h
 ///
 /// Author: $author$
-///   Date: 7/23/2019
+///   Date: 7/27/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
-#define _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
+/*/
+#ifndef _XOS_PLATFORM_OS_MICROSOFT_WINDOWS_HANDLE_H_
+#define _XOS_PLATFORM_OS_MICROSOFT_WINDOWS_HANDLE_H_
 
-#include "xos/platform/os/oracle/solaris/semaphore.h"
+#include "xos/platform/os/microsoft/Windows.h"
 
-namespace xos {
-namespace platform {
-namespace os {
-namespace oracle {
-namespace solaris {
-
-} /// namespace solaris
-} /// namespace oracle
-} /// namespace os
-} /// namespace platform
-} /// namespace xos
-
-#endif /// _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
+#endif /*/ _XOS_PLATFORM_OS_MICROSOFT_WINDOWS_HANDLE_H_ /*/

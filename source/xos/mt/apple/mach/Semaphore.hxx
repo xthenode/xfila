@@ -53,10 +53,6 @@ public:
     typedef TImplements Implements;
     typedef TExtends Extends;
 
-    typedef typename Extends::Error Error;
-    static const Error ErrorSuccess = Extends::ErrorSuccess;
-    static const Error ErrorFailed = Extends::ErrorFailed;
-
     typedef typename Extends::Attached Attached;
     static const typename Extends::UnattachedT Unattached = Extends::Unattached;
 
@@ -113,19 +109,19 @@ public:
                 semaphore_t& semaphore = *detached;
                 mseconds_t millisecondsThreashold = this->TimedLoggedThreasholdMilliseconds();
                 bool isLogged = ((this->IsLogged()) && (milliseconds >= millisecondsThreashold));
-                Error err = 0;
+                int err = 0;
                 mach_timespec_t wait_time;
 
                 wait_time.tv_sec = MSecondsSeconds(milliseconds);
                 wait_time.tv_nsec = MSecondsNSeconds(MSecondsMSeconds(milliseconds));
 
-                IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "::semaphore_timedwait(semaphore, wait_time)...");
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "::semaphore_timedwait(semaphore, wait_time)...");
                 if (KERN_SUCCESS == (err = ::semaphore_timedwait(semaphore, wait_time))) {
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...::semaphore_timedwait(semaphore, wait_time)...");
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...::semaphore_timedwait(semaphore, wait_time)...");
                     return AcquireSuccess;
                 } else {
                     if (KERN_OPERATION_TIMED_OUT == (err)) {
-                        IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed KERN_OPERATION_TIMED_OUT err = " << err << " on ::semaphore_timedwait(semaphore, wait_time)");
+                        IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...failed KERN_OPERATION_TIMED_OUT err = " << err << " on ::semaphore_timedwait(semaphore, wait_time)");
                         return AcquireBusy;
                     } else {
                         if (KERN_ABORTED == (err)) {
@@ -168,7 +164,7 @@ public:
     virtual AcquireStatus UntimedReleaseDetached(Attached detached) const { 
         if (((Attached)Unattached) != detached) {
             semaphore_t& semaphore = *detached;
-            Error err = 0;
+            int err = 0;
 
             IS_ERR_LOGGED_DEBUG("::semaphore_signal(semaphore)...");
             if (KERN_SUCCESS == (err = ::semaphore_signal(semaphore))) {
@@ -197,7 +193,7 @@ public:
         Attached detached = ((Attached)Unattached);
         sync_policy_t syncPolicy = SYNC_POLICY_FIFO;
         task_t task = mach_task_self();
-        Error err = 0;
+        int err = 0;
 
         IS_ERR_LOGGED_DEBUG("::semaphore_create(task, &semaphore, syncPolicy, initiallyReleased)...");
         if (KERN_SUCCESS != (err = ::semaphore_create(task, &semaphore, syncPolicy, initiallyReleased))) {
@@ -212,7 +208,7 @@ public:
         if (((Attached)Unattached) != detached) {
             semaphore_t& semaphore = *detached;
             task_t task = mach_task_self();
-            Error err = 0;
+            int err = 0;
 
             IS_ERR_LOGGED_DEBUG("::semaphore_destroy(task, semaphore)...")
             if (KERN_SUCCESS != (err = ::semaphore_destroy(task, semaphore))) {

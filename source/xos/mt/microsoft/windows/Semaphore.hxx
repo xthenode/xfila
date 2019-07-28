@@ -45,10 +45,6 @@ public:
     typedef TImplements Implements;
     typedef TExtends Extends;
 
-    typedef typename Extends::Error Error;
-    static const Error ErrorSuccess = Extends::ErrorSuccess;
-    static const Error ErrorFailed = Extends::ErrorFailed;
-
     typedef typename Extends::Attached Attached;
     static const typename Extends::UnattachedT Unattached = Extends::Unattached;
 
@@ -127,13 +123,13 @@ public:
                 bool isLogged = ((this->IsLogged()) && (milliseconds >= millisecondsThreashold));
                 DWORD dwMilliseconds = (DWORD)(milliseconds), dwResult = 0;
 
-                IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "::WaitForSingleObject(detached, dwMilliseconds)...");
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "::WaitForSingleObject(detached, dwMilliseconds)...");
                 if (WAIT_OBJECT_0 == (dwResult = ::WaitForSingleObject(detached, dwMilliseconds))) {
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...::WaitForSingleObject(detached, dwMilliseconds)");
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...::WaitForSingleObject(detached, dwMilliseconds)");
                     return AcquireSuccess;
                 } else {
                     if (WAIT_TIMEOUT == (dwResult)) {
-                        IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed WAIT_TIMEOUT dwResult = " << dwResult << " on ::WaitForSingleObject(detached, dwMilliseconds)");
+                        IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...failed WAIT_TIMEOUT dwResult = " << dwResult << " on ::WaitForSingleObject(detached, dwMilliseconds)");
                         return AcquireBusy;
                     } else {
                         if (WAIT_ABANDONED == (dwResult)) {

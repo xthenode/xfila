@@ -44,7 +44,7 @@ int sema_init(sema_t *sp, unsigned int count, int type, void * arg) {
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
         ::xos::mt::os::Semaphore* pSemaphore = 0;
 
-        if ((pSemaphore = new ::xos::mt::os::Semaphore(((::xos::mt::os::Semaphore::Attached)::xos::mt::os::Semaphore::Unattached)))) {
+        if ((pSemaphore = new ::xos::mt::os::Semaphore(((::xos::mt::os::Semaphore::Attached)::xos::mt::os::Semaphore::Unattached, false, false)))) {
             if ((pSemaphore->Create(count))) {
                 *ppSemaphore = pSemaphore;
                 return 0;
@@ -107,8 +107,18 @@ int sema_trywait(sema_t *sp) {
         ::xos::mt::os::Semaphore* pSemaphore = 0;
 
         if ((pSemaphore = (*ppSemaphore))) {
-            if ((pSemaphore->TryAcquire())) {
+            ::xos::AcquireStatus status = ::xos::AcquireFailed;
+            if (::xos::AcquireSuccess == (status = pSemaphore->TryAcquire())) {
                 return 0;
+            } else {
+                if (::xos::AcquireBusy == (status)) {
+                    return EBUSY;
+                } else {
+                    if (::xos::AcquireInterrupted == (status)) {
+                        return EINTR;
+                    } else {
+                    }
+                }
             }
         }
     }

@@ -59,7 +59,7 @@ inline int clock_gettime(clockid_t clk_id, struct timespec *res) {
 #endif /// !defined(CLOCK_REALTIME)
 #define POSIX_SEM_HAS_TIMEDWAIT
 inline int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
-    return EINVAL; 
+    return EINVAL;
 }
 #endif /// !defined(POSIX_SEM_HAS_TIMEDWAIT)
 
@@ -72,7 +72,18 @@ inline int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
 #if !defined(POSIX_SEM_HAS_TIMEDWAIT_RELATIVE_NP)
 #define POSIX_SEM_HAS_TIMEDWAIT_RELATIVE_NP
 inline int sem_timedwait_relative_np(sem_t *sem, const struct timespec *timeout) {
-    return EINVAL; 
+#if defined(POSIX_SEM_HAS_TIMEDWAIT)
+    if ((sem) && (timeout)) {
+        int err = 0; struct timespec untilTime;
+        if (!(err = ::clock_gettime(CLOCK_REALTIME, &untilTime))) {
+            untilTime.tv_sec +=  timeout->tv_sec;
+            untilTime.tv_nsec +=  timeout->tv_nsec;
+            err = ::sem_timedwait(sem, &untilTime);
+        }
+        return err;
+    }
+#endif /// defined(POSIX_SEM_HAS_TIMEDWAIT)
+    return EINVAL;
 }
 #endif /// !defined(POSIX_SEM_HAS_TIMEDWAIT_RELATIVE_NP)
 
@@ -104,10 +115,6 @@ class _EXPORT_CLASS SemaphoreT: virtual public TImplements, public TExtends {
 public:
     typedef TImplements Implements;
     typedef TExtends Extends;
-
-    typedef typename Extends::Error Error;
-    static const Error ErrorSuccess = Extends::ErrorSuccess;
-    static const Error ErrorFailed = Extends::ErrorFailed;
 
     typedef typename Extends::Attached Attached;
     static const typename Extends::UnattachedT Unattached = Extends::Unattached;
@@ -202,19 +209,25 @@ public:
                     IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...::sem_timedwait" << _relative_np << "(detached, &untilTime)...");
                     return AcquireSuccess;
                 } else {
-                    if (EBUSY == (err)) {
-                        IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed EBUSY err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
+                    err = errno;
+                    if (EAGAIN == (err)) {
+                        IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed EAGAIN err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
                         return AcquireBusy;
                     } else {
-                        if (ETIMEDOUT == (err)) {
-                            IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed ETIMEDOUT err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
+                        if (EBUSY == (err)) {
+                            IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed EBUSY err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
                             return AcquireBusy;
                         } else {
-                            if (EINTR == (err)) {
-                                IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
-                                return AcquireInterrupted;
+                            if (ETIMEDOUT == (err)) {
+                                IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...failed ETIMEDOUT err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
+                                return AcquireBusy;
                             } else {
-                                IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
+                                if (EINTR == (err)) {
+                                    IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
+                                    return AcquireInterrupted;
+                                } else {
+                                    IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sem_timedwait" << _relative_np << "(detached, &untilTime)");
+                                }
                             }
                         }
                     }
@@ -241,19 +254,25 @@ public:
                 IS_ERR_LOGGED_TRACE("...::sem_trywait(detached)");
                 return AcquireSuccess;
             } else {
-                if (EBUSY == (err)) {
-                    IS_ERR_LOGGED_TRACE("...failed EBUSY err = " << err << " on ::sem_trywait(detached)");
+                err = errno;
+                if (EAGAIN == (err)) {
+                    IS_ERR_LOGGED_TRACE("...failed EAGAIN err = " << err << " on ::sem_trywait(detached)");
                     return AcquireBusy;
                 } else {
-                    if (ETIMEDOUT == (err)) {
-                        IS_ERR_LOGGED_TRACE("...failed ETIMEDOUT err = " << err << " on ::sem_trywait(detached)");
+                    if (EBUSY == (err)) {
+                        IS_ERR_LOGGED_TRACE("...failed EBUSY err = " << err << " on ::sem_trywait(detached)");
                         return AcquireBusy;
                     } else {
-                        if (EINTR == (err)) {
-                            IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sem_trywait(detached)");
-                            return AcquireInterrupted;
+                        if (ETIMEDOUT == (err)) {
+                            IS_ERR_LOGGED_TRACE("...failed ETIMEDOUT err = " << err << " on ::sem_trywait(detached)");
+                            return AcquireBusy;
                         } else {
-                            IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sem_trywait(detached)");
+                            if (EINTR == (err)) {
+                                IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sem_trywait(detached)");
+                                return AcquireInterrupted;
+                            } else {
+                                IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sem_trywait(detached)");
+                            }
                         }
                     }
                 }
@@ -269,19 +288,25 @@ public:
                 IS_ERR_LOGGED_DEBUG("...::sem_wait(detached)");
                 return AcquireSuccess;
             } else {
-                if (EBUSY == (err)) {
-                    IS_ERR_LOGGED_ERROR("...failed EBUSY err = " << err << " on ::sem_wait(detached)");
-                    return AcquireBusy;
+                err = errno;
+                if (EAGAIN == (err)) {
+                    IS_ERR_LOGGED_ERROR("...failed EAGAIN err = " << err << " on ::sem_wait(detached)");
+                    return AcquireFailed;
                 } else {
-                    if (ETIMEDOUT == (err)) {
-                        IS_ERR_LOGGED_ERROR("...failed ETIMEDOUT err = " << err << " on ::sem_wait(detached)");
-                        return AcquireBusy;
+                    if (EBUSY == (err)) {
+                        IS_ERR_LOGGED_ERROR("...failed EBUSY err = " << err << " on ::sem_wait(detached)");
+                        return AcquireFailed;
                     } else {
-                        if (EINTR == (err)) {
-                            IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sem_wait(detached)");
-                            return AcquireInterrupted;
+                        if (ETIMEDOUT == (err)) {
+                            IS_ERR_LOGGED_ERROR("...failed ETIMEDOUT err = " << err << " on ::sem_wait(detached)");
+                            return AcquireFailed;
                         } else {
-                            IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sem_wait(detached)");
+                            if (EINTR == (err)) {
+                                IS_ERR_LOGGED_ERROR("...failed EINTR err = " << err << " on ::sem_wait(detached)");
+                                return AcquireInterrupted;
+                            } else {
+                                IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::sem_wait(detached)");
+                            }
                         }
                     }
                 }
@@ -298,6 +323,7 @@ public:
                 IS_ERR_LOGGED_DEBUG("...::sem_post(detached)");
                 return ReleaseSuccess;
             } else {
+                err = errno;
                 IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::semaphore_signal(detached)");
             }
         }

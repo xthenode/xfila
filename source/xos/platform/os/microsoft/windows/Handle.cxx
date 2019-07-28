@@ -13,26 +13,52 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: semaphore.hxx
+///   File: Handle.cxx
 ///
 /// Author: $author$
-///   Date: 7/23/2019
+///   Date: 7/27/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
-#define _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
-
-#include "xos/platform/os/oracle/solaris/semaphore.h"
+#include "xos/platform/os/microsoft/windows/Handle.hxx"
 
 namespace xos {
 namespace platform {
 namespace os {
-namespace oracle {
-namespace solaris {
+namespace microsoft {
+namespace windows {
 
-} /// namespace solaris
-} /// namespace oracle
+} /// namespace windows
+} /// namespace microsoft
 } /// namespace os
 } /// namespace platform
 } /// namespace xos
 
-#endif /// _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_HXX_
+#if !defined(WINDOWS)
+/// 
+/// windows handles
+/// ...
+BOOL WINAPI CloseHandle(
+  _In_ HANDLE hObject
+) {
+    ::xos::platform::os::microsoft::windows::Handle* handle = 0;
+    if ((handle = ((::xos::platform::os::microsoft::windows::Handle*)hObject))) {
+        BOOL success = handle->CloseHandle();
+        delete handle;
+        return success;
+    }
+    return FALSE;
+}
+DWORD WINAPI WaitForSingleObject(
+  _In_ HANDLE hHandle,
+  _In_ DWORD  dwMilliseconds
+) {
+    ::xos::platform::os::microsoft::windows::Handle* handle = 0;
+    if ((handle = ((::xos::platform::os::microsoft::windows::Handle*)hHandle))) {
+        DWORD dwStatus = handle->WaitForSingleObject(dwMilliseconds);
+        return dwStatus;
+    }
+    return WAIT_FAILED;
+}
+/// ...
+/// windows handles
+/// 
+#endif /// !defined(WINDOWS)
