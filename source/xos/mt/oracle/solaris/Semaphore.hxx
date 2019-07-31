@@ -26,8 +26,40 @@
 #if defined(SOLARIS)
 #include <synch.h>
 #else /// defined(SOLARIS)
-#include "xos/platform/os/oracle/solaris/synch.h"
+#include "xos/platform/os/oracle/solaris/semaphore.h"
 #endif /// defined(SOLARIS)
+
+#if !defined(SEMA_HAS_TIMEDWAIT)
+#define SEMA_HAS_TIMEDWAIT
+#endif /// !defined(SEMA_HAS_TIMEDWAIT)
+
+#if !defined(SEMA_HAS_RELTIMEDWAIT)
+#define SEMA_HAS_RELTIMEDWAIT
+#endif /// !defined(SEMA_HAS_RELTIMEDWAIT)
+
+#if !defined(CLOCK_HAS_RELGETTIME)
+inline int clock_relgettime(timestruc_t* abstime) {
+    if ((abstime)) {
+        abstime->tv_sec = 0;
+        abstime->tv_nsec = 0;
+        return 0;
+    }
+    return EINVAL;
+}
+#define CLOCK_HAS_RELGETTIME
+#endif /// !defined(CLOCK_HAS_RELGETTIME)
+
+#if defined(SEMA_HAS_TIMEDWAIT)
+#if !defined(CLOCK_REALTIME)
+#define CLOCK_REALTIME 0
+#define clockid_t int
+#endif /// !defined(CLOCK_REALTIME)
+#if !defined(CLOCK_HAS_GETTIME)
+inline int clock_gettime(int id, timestruc_t* abstime) {
+    return ::clock_relgettime(abstime);
+}
+#endif /// !defined(CLOCK_HAS_GETTIME)
+#endif /// defined(SEMA_HAS_TIMEDWAIT)
 
 namespace xos {
 namespace mt {
@@ -110,8 +142,44 @@ public:
     ///////////////////////////////////////////////////////////////////////
     virtual AcquireStatus TimedAcquireDetached(Attached detached, mseconds_t milliseconds) const { 
         if (0 < (milliseconds)) {
+#if defined(SEMA_HAS_TIMEDWAIT)
+            if (((Attached)Unattached) != detached) {
+                bool isLogged = ((this->IsLogged()) && (milliseconds >= this->TimedLoggedThreasholdMilliseconds()));
+                int err = 0;
+                timestruc_t untilTime;
+    
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "clock_gettime(CLOCK_REALTIME, &untilTime)...");
+                if ((err = clock_gettime(CLOCK_REALTIME, &untilTime))) {
+                    IS_ERR_LOGGED_ERROR("...failed " << err << " on clock_gettime(CLOCK_REALTIME, &untilTime)");
+                    return LockFailed;
+                } else {
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...clock_gettime(CLOCK_REALTIME, &untilTime)");
+                }
+                untilTime.tv_sec +=  MSecondsSeconds(milliseconds);
+                untilTime.tv_nsec +=  MSecondsNSeconds(MSecondsMSeconds(milliseconds));
+    
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "sema_timedwait(detached, &untilTime)...");
+                if ((err = sema_timedwait(detached, &untilTime))) {
+                    switch(err) {
+                    case ETIME:
+                        IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...ETIME err = "<< err << " on sema_timedwait(detached, &untilTime)");
+                        return LockBusy;
+                    case EINTR:
+                        IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on sema_timedwait(detached, &untilTime)");
+                        return LockInterrupted;
+                    default:
+                        IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on sema_timedwait(detached, &untilTime)");
+                        return LockFailed;
+                    }
+                } else {
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...sema_timedwait(detached, &untilTime)");
+                    return LockSuccess;
+                }
+            }
+#else /// defined(SEMA_HAS_TIMEDWAIT)
             IS_ERR_LOGGED_ERROR("...return AcquireInvalid");
             return AcquireInvalid;
+#endif /// defined(SEMA_HAS_TIMEDWAIT)
         } else {
             if (0 > (milliseconds)) {
                 return UntimedAcquireDetached(detached);
@@ -212,6 +280,24 @@ public:
         }
         return false;
     }
+    
+protected:
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    inline int clock_gettime(int id, timestruc_t* abstime) const {
+#if defined(SEMA_HAS_RELTIMEDWAIT)
+        return ::clock_relgettime(abstime);
+#else /// defined(SEMA_HAS_RELTIMEDWAIT)
+        return ::clock_gettime(id, abstime);
+#endif /// defined(SEMA_HAS_RELTIMEDWAIT)
+    }   
+    inline int sema_timedwait(sema_t *sp, timestruc_t *abstime) const {
+#if defined(SEMA_HAS_RELTIMEDWAIT)
+        return ::sema_reltimedwait(sp, abstime);
+#else /// defined(SEMA_HAS_RELTIMEDWAIT)
+        return ::sema_timedwait(sp, abstime);
+#endif /// defined(SEMA_HAS_RELTIMEDWAIT)
+    }   
     
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////

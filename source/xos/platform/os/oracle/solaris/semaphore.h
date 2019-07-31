@@ -40,6 +40,8 @@ extern int sema_destroy(sema_t *sp);
 extern int sema_post(sema_t *sp);
 extern int sema_wait(sema_t *sp);
 extern int sema_trywait(sema_t *sp);
+extern int sema_timedwait(sema_t *sp, timestruc_t *abstime);
+extern int sema_reltimedwait(sema_t *sp, timestruc_t *reltime);
 
 #if defined(__cplusplus)
 } /*/ extern "C" /*/

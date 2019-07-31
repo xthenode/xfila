@@ -38,7 +38,6 @@ namespace solaris {
 /// solaris semaphores
 /// ...
 int sema_init(sema_t *sp, unsigned int count, int type, void * arg) {
-    int err = EINVAL;
     ::xos::mt::os::Semaphore** ppSemaphore = 0;
 
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
@@ -52,10 +51,9 @@ int sema_init(sema_t *sp, unsigned int count, int type, void * arg) {
             delete pSemaphore;
         }
     }
-    return err;
+    return EINVAL;
 }   
 int sema_destroy(sema_t *sp) {
-    int err = EINVAL;
     ::xos::mt::os::Semaphore** ppSemaphore = 0;
 
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
@@ -67,10 +65,9 @@ int sema_destroy(sema_t *sp) {
             return 0;
         }
     }
-    return err;
+    return EINVAL;
 }   
 int sema_post(sema_t *sp) {
-    int err = EINVAL;
     ::xos::mt::os::Semaphore** ppSemaphore = 0;
 
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
@@ -82,10 +79,9 @@ int sema_post(sema_t *sp) {
             }
         }
     }
-    return err;
+    return EINVAL;
 }   
 int sema_wait(sema_t *sp) {
-    int err = EINVAL;
     ::xos::mt::os::Semaphore** ppSemaphore = 0;
 
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
@@ -97,10 +93,9 @@ int sema_wait(sema_t *sp) {
             }
         }
     }
-    return err;
+    return EINVAL;
 }   
 int sema_trywait(sema_t *sp) {
-    int err = EINVAL;
     ::xos::mt::os::Semaphore** ppSemaphore = 0;
 
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
@@ -122,7 +117,52 @@ int sema_trywait(sema_t *sp) {
             }
         }
     }
-    return err;
+    return EINVAL;
+}   
+int sema_timedwait(sema_t *sp, timestruc_t *abstime) {
+    ::xos::mt::os::Semaphore** ppSemaphore = 0;
+
+    if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
+        ::xos::mt::os::Semaphore* pSemaphore = 0;
+
+        if ((pSemaphore = (*ppSemaphore)) && (abstime)) {
+            int err = 0;
+            timestruc_t reltime;
+            if (!(err = ::clock_gettime(CLOCK_REALTIME, &reltime))) {
+                reltime.tv_sec = abstime->tv_sec - reltime.tv_sec;
+                reltime.tv_nsec = abstime->tv_nsec - reltime.tv_nsec;
+                err = sema_reltimedwait(sp, &reltime);
+                return err;
+            }
+        }
+    }
+    return EINVAL;
+}   
+int sema_reltimedwait(sema_t *sp, timestruc_t *reltime) {
+    ::xos::mt::os::Semaphore** ppSemaphore = 0;
+
+    if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
+        ::xos::mt::os::Semaphore* pSemaphore = 0;
+
+        if ((pSemaphore = (*ppSemaphore)) && (reltime)) {
+            mseconds_t milliseconds = ::xos::SecondsMSeconds(reltime->tv_sec) + ::xos::NSecondsMSeconds(reltime->tv_nsec);
+            ::xos::AcquireStatus status = ::xos::AcquireFailed;
+
+            if (::xos::AcquireSuccess == (status = pSemaphore->TimedAcquire(milliseconds))) {
+                return 0;
+            } else {
+                if (::xos::AcquireBusy == (status)) {
+                    return ETIME;
+                } else {
+                    if (::xos::AcquireInterrupted == (status)) {
+                        return EINTR;
+                    } else {
+                    }
+                }
+            }
+        }
+    }
+    return EINVAL;
 }   
 /// ...
 /// solaris semaphores

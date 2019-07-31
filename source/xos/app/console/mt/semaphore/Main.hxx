@@ -71,9 +71,15 @@ protected:
                     Acquire acquire(acquired);
                     this->OutLLn(__LOCATION__, "...Acquire acquire(acquired)", NULL);
                 } else {
-                    this->OutLLn(__LOCATION__, "Acquire acquire(acquired, timeout = ", UnsignedToString(timeout).Chars(), ")...", NULL);
-                    Acquire acquire(acquired, timeout);
-                    this->OutLLn(__LOCATION__, "...Acquire acquire(acquired, timeout = ", UnsignedToString(timeout).Chars(), ")", NULL);
+                    if ((timeout)) {
+                        this->OutLLn(__LOCATION__, "Acquire acquire(acquired, timeout = ", UnsignedToString(timeout).Chars(), ")...", NULL);
+                        Acquire acquire(acquired, timeout);
+                        this->OutLLn(__LOCATION__, "...Acquire acquire(acquired, timeout = ", UnsignedToString(timeout).Chars(), ")", NULL);
+                    } else {
+                        this->OutLLn(__LOCATION__, "TryAcquire acquire(acquired,)...", NULL);
+                        TryAcquire acquire(acquired);
+                        this->OutLLn(__LOCATION__, "...TryAcquire acquire(acquired)", NULL);
+                    }
                 }
                 err = 0;
                 this->OutLLn(__LOCATION__, "...} try", NULL);

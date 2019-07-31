@@ -31,7 +31,6 @@
 #if !defined(HAS_POSIX_TIMEOUTS)
 #if defined(_POSIX_TIMEOUTS) && (_POSIX_TIMEOUTS >=0 )
 #define HAS_POSIX_TIMEOUTS
-#else /// defined(_POSIX_TIMEOUTS) && (_POSIX_TIMEOUTS >=0 )
 #endif /// defined(_POSIX_TIMEOUTS) && (_POSIX_TIMEOUTS >=0 )
 #endif /// !defined(HAS_POSIX_TIMEOUTS)
 
@@ -41,30 +40,37 @@
 #endif /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
 #endif /// defined(HAS_POSIX_TIMEOUTS)
 
-#if !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
-#if !defined(CLOCK_REALTIME)
-#define CLOCK_REALTIME 0
-#define clockid_t int
-inline int clock_gettime(clockid_t clk_id, struct timespec *res) {
+#if !defined(CLOCK_HAS_GETTIME_RELATIVE_NP)
+inline int clock_gettime_relative_np(struct timespec *res) {
     if ((res)) {
-        memset(res, 0, sizeof(struct timespec));
+        res->tv_sec = 0;
+        res->tv_nsec = 0;
         return 0; 
     }
     return EINVAL; 
 }
-#else /// !defined(CLOCK_REALTIME)
+#define CLOCK_HAS_GETTIME_RELATIVE_NP
+#endif /// !defined(CLOCK_HAS_GETTIME_RELATIVE_NP)
+
+#if !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
+#if !defined(CLOCK_REALTIME)
+#define CLOCK_REALTIME 0
+#define clockid_t int
 #endif /// !defined(CLOCK_REALTIME)
-inline int pthread_mutex_timedlock
-(pthread_mutex_t *mutex, const struct timespec *abs_timeout) {
+#if !defined(CLOCK_HAS_GETTIME)
+inline int clock_gettime(clockid_t clk_id, struct timespec *res) {
+    return ::clock_gettime_relative_np(res); 
+}
+#define CLOCK_HAS_GETTIME
+#endif /// !defined(CLOCK_HAS_GETTIME)
+inline int pthread_mutex_timedlock(pthread_mutex_t *mutex, const struct timespec *abs_timeout) {
     return EINVAL; 
 }
 #define PTHREAD_MUTEX_HAS_TIMEDLOCK
-#else /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
 #endif /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
 
 #if !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-inline int pthread_mutex_timedlock_relative_np
-(pthread_mutex_t *mutex, const struct timespec *timeout) {
+inline int pthread_mutex_timedlock_relative_np(pthread_mutex_t *mutex, const struct timespec *timeout) {
 #if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
     if ((mutex) && (timeout)) {
         int err = 0; struct timespec untilTime;
@@ -79,7 +85,6 @@ inline int pthread_mutex_timedlock_relative_np
     return EINVAL;
 }
 #define PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP
-#else /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
 #endif /// !defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
 
 namespace xos {
@@ -179,52 +184,40 @@ public:
     virtual LockStatus TimedLockDetached(pthread_mutex_t& mutex, mseconds_t milliseconds) const { 
         if (0 < (milliseconds)) {
 #if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
-#if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            const char* _relative_np = "_relative_np";
-#else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            const char* _relative_np = "";
-#endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
             bool isLogged = ((this->IsLogged()) && (milliseconds >= this->TimedLoggedThreasholdMilliseconds()));
             int err = 0;
             struct timespec untilTime;
 
-#if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "::memset(&untilTime, 0, sizeof(untilTime))...");
-            ::memset(&untilTime, 0, sizeof(untilTime));
-#else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "::clock_gettime(CLOCK_REALTIME, &untilTime)...");
-            ::clock_gettime(CLOCK_REALTIME, &untilTime);
-#endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-
+            IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "clock_gettime(CLOCK_REALTIME, &untilTime)...");
+            if ((err = clock_gettime(CLOCK_REALTIME, &untilTime))) {
+                IS_ERR_LOGGED_ERROR("...failed err = " << err << " on clock_gettime(CLOCK_REALTIME, &untilTime)");
+            } else {
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...clock_gettime(CLOCK_REALTIME, &untilTime)");
+            }
             untilTime.tv_sec +=  MSecondsSeconds(milliseconds);
             untilTime.tv_nsec +=  MSecondsNSeconds(MSecondsMSeconds(milliseconds));
 
-            IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)...");
-#if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            err = ::pthread_mutex_timedlock_relative_np(&mutex, &untilTime);
-#else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            err = ::pthread_mutex_timedlock(&mutex, &untilTime);
-#endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
-            if ((err)) {
+            IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "pthread_mutex_timedlock(&mutex, &untilTime)...");
+            if ((err = pthread_mutex_timedlock(&mutex, &untilTime))) {
                 switch(err) {
                 case EAGAIN:
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...EAGAIN err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...EAGAIN err = "<< err << " on pthread_mutex_timedlock(&mutex, &untilTime)");
                     return LockBusy;
                 case EBUSY:
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...EBUSY err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...EBUSY err = "<< err << " on pthread_mutex_timedlock(&mutex, &untilTime)");
                     return LockBusy;
                 case ETIMEDOUT:
-                    IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...ETIMEDOUT err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...ETIMEDOUT err = "<< err << " on pthread_mutex_timedlock(&mutex, &untilTime)");
                     return LockBusy;
                 case EINTR:
-                    IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on pthread_mutex_timedlock(&mutex, &untilTime)");
                     return LockInterrupted;
                 default:
-                    IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                    IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on pthread_mutex_timedlock(&mutex, &untilTime)");
                     return LockFailed;
                 }
             } else {
-                IF_ERR_LOGGED_DEBUG(isLogged, isLogged, "...::pthread_mutex_timedlock" << _relative_np << "(&mutex, &untilTime)");
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...pthread_mutex_timedlock(&mutex, &untilTime)");
                 return LockSuccess;
             }
 #else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK)
@@ -349,6 +342,24 @@ public:
             }
         }
         return false;
+    }
+    
+protected:
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    inline int clock_gettime(clockid_t clk_id, struct timespec *res) const {
+#if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+        return ::clock_gettime_relative_np(res); 
+#else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+        return ::clock_gettime(clk_id, res);
+#endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+    }
+    inline int pthread_mutex_timedlock(pthread_mutex_t *mutex, const struct timespec *abs_timeout) const {
+#if defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+        return ::pthread_mutex_timedlock_relative_np(mutex, abs_timeout);
+#else /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
+        return ::pthread_mutex_timedlock(mutex, abs_timeout);
+#endif /// defined(PTHREAD_MUTEX_HAS_TIMEDLOCK_RELATIVE_NP)
     }
 
     ///////////////////////////////////////////////////////////////////////
