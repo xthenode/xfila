@@ -53,12 +53,44 @@ $${xfila_DEFINES} \
 # condition HEADERS
 #
 condition_HEADERS += \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/time.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/time.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/time.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/thread.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/synch.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.cxx \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/condition.h \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/condition.hxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/condition.cxx \
+\
+$${XFILA_SRC}/xos/mt/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/Condition.hxx \
+$${XFILA_SRC}/xos/mt/posix/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/posix/Condition.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Condition.hxx \
+\
 $${XFILA_SRC}/xos/app/console/mt/condition/MainOpt.hxx \
 $${XFILA_SRC}/xos/app/console/mt/condition/Main.hxx \
 
 # condition SOURCES
 #
 condition_SOURCES += \
+\
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.cxx \
+$${XFILA_SRC}/xos/platform/os/oracle/solaris/condition.cxx \
+\
 $${XFILA_SRC}/xos/app/console/mt/condition/MainOpt.cxx \
 $${XFILA_SRC}/xos/app/console/mt/condition/Main.cxx \
 

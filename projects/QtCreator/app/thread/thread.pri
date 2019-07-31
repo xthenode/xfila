@@ -54,6 +54,9 @@ $${xfila_DEFINES} \
 #
 thread_HEADERS += \
 \
+$${XFILA_SRC}/xos/mt/Thread.hxx \
+$${XFILA_SRC}/xos/mt/posix/Thread.hxx \
+\
 $${XFILA_SRC}/xos/mt/microsoft/windows/Thread.hxx \
 $${XFILA_SRC}/xos/mt/microsoft/windows/crt/Thread.hxx \
 \
@@ -64,7 +67,7 @@ $${XFILA_SRC}/xos/app/console/mt/thread/Main.hxx \
 #
 thread_SOURCES += \
 \
-$${XFILA_SRC}/xos/mt/microsoft/windows/Thread.cxx \
+$${XFILA_SRC}/xos/mt/posix/Thread.cxx \
 \
 $${XFILA_SRC}/xos/app/console/mt/thread/MainOpt.cxx \
 $${XFILA_SRC}/xos/app/console/mt/thread/Main.cxx \
