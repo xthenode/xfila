@@ -44,7 +44,7 @@ int sema_init(sema_t *sp, unsigned int count, int type, void * arg) {
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sp))) {
         ::xos::mt::os::Semaphore* pSemaphore = 0;
 
-        if ((pSemaphore = new ::xos::mt::os::Semaphore(((::xos::mt::os::Semaphore::Attached)::xos::mt::os::Semaphore::Unattached, false, false)))) {
+        if ((pSemaphore = new ::xos::mt::os::Semaphore(((::xos::mt::os::Semaphore::Attached)::xos::mt::os::Semaphore::Unattached), false, false))) {
             if ((pSemaphore->Create(count))) {
                 *ppSemaphore = pSemaphore;
                 return 0;

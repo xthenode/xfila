@@ -25,6 +25,7 @@
 #include "xos/mt/posix/Condition.hxx"
 #include "xos/mt/linux/Condition.hxx"
 #include "xos/mt/apple/osx/Condition.hxx"
+#include "xos/mt/oracle/solaris/Condition.hxx"
 #include "xos/mt/microsoft/windows/Condition.hxx"
 #include "xos/app/console/mt/condition/MainOpt.hxx"
 
@@ -65,12 +66,18 @@ protected:
                     this->OutLLn(__LOCATION__, "signaled.Signal()", NULL);
                     signaled.Signal();
                     this->OutLLn(__LOCATION__, "Wait wait(signaled)...", NULL);
-                    Wait wait(signaled, timeout);
+                    Wait wait(signaled);
                     this->OutLLn(__LOCATION__, "...Wait wait(signaled)", NULL);
                 } else {
-                    this->OutLLn(__LOCATION__, "Wait wait(signaled, timeout = ", UnsignedToString(timeout).Chars(), " ms)...", NULL);
-                    Wait wait(signaled, timeout);
-                    this->OutLLn(__LOCATION__, "...Wait wait(signaled, timeout = ", UnsignedToString(timeout).Chars(), " ms)", NULL);
+                    if ((timeout)) {
+                        this->OutLLn(__LOCATION__, "Wait wait(signaled, timeout = ", UnsignedToString(timeout).Chars(), " ms)...", NULL);
+                        Wait wait(signaled, timeout);
+                        this->OutLLn(__LOCATION__, "...Wait wait(signaled, timeout = ", UnsignedToString(timeout).Chars(), " ms)", NULL);
+                    } else {
+                        this->OutLLn(__LOCATION__, "TryWait wait(signaled)...", NULL);
+                        TryWait wait(signaled);
+                        this->OutLLn(__LOCATION__, "...TryWait wait(signaled)", NULL);
+                    }
                 }
                 err = 0;
                 this->OutLLn(__LOCATION__, "...} try", NULL);
@@ -113,6 +120,10 @@ protected:
     }
     virtual int WindowsRun(int argc, char_t**argv, char_t** env) {
         int err = RunT< ::xos::mt::microsoft::windows::Condition, ::xos::mt::microsoft::windows::Mutex >(argc, argv, env);
+        return err;
+    }
+    virtual int SolarisRun(int argc, char_t**argv, char_t** env) {
+        int err = RunT< ::xos::mt::oracle::solaris::Condition, ::xos::mt::oracle::solaris::Mutex >(argc, argv, env);
         return err;
     }
     virtual int OsxRun(int argc, char_t**argv, char_t** env) {

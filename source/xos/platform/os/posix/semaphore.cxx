@@ -56,7 +56,7 @@ int sem_init(sem_t *sem, int pshared, unsigned int value) {
     if ((ppSemaphore = ((::xos::mt::os::Semaphore**)sem))) {
         ::xos::mt::os::Semaphore* pSemaphore = 0;
 
-        if ((pSemaphore = new ::xos::mt::os::Semaphore(((::xos::mt::os::Semaphore::Attached)::xos::mt::os::Semaphore::Unattached, false, false)))) {
+        if ((pSemaphore = new ::xos::mt::os::Semaphore(((::xos::mt::os::Semaphore::Attached)::xos::mt::os::Semaphore::Unattached), false, false))) {
             if ((pSemaphore->Create(value))) {
                 *ppSemaphore = pSemaphore;
                 return 0;

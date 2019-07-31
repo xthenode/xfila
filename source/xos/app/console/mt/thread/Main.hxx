@@ -67,19 +67,25 @@ protected:
             this->OutLLn(__LOCATION__, "...sleep(timeout = ", UnsignedToString(timeout).Chars(), ")", NULL);
         }
     }
-    virtual void Run(::xos::Joined& joined) {
+    virtual void Run(Joined& joined) {
         mseconds_t timeout = 0;
         bool infinite = this->InfiniteTimeout(timeout);
         this->OutLLn(__LOCATION__, "try {...", NULL);
         try {
             if ((infinite)) {
-                this->OutLLn(__LOCATION__, "::xos::Join join(joined)...", NULL);
-                ::xos::Join join(joined);
-                this->OutLLn(__LOCATION__, "...::xos::Join join(joined)", NULL);
+                this->OutLLn(__LOCATION__, "Join join(joined)...", NULL);
+                Join join(joined);
+                this->OutLLn(__LOCATION__, "...Join join(joined)", NULL);
             } else {
-                this->OutLLn(__LOCATION__, "::xos::Join join(joined, timeout = ", UnsignedToString(timeout).Chars(), ")...", NULL);
-                ::xos::Join join(joined, timeout);
-                this->OutLLn(__LOCATION__, "...::xos::Join join(joined, timeout = ", UnsignedToString(timeout).Chars(), ")", NULL);
+                if ((timeout)) {
+                    this->OutLLn(__LOCATION__, "Join join(joined, timeout = ", UnsignedToString(timeout).Chars(), ")...", NULL);
+                    Join join(joined, timeout);
+                    this->OutLLn(__LOCATION__, "...Join join(joined, timeout = ", UnsignedToString(timeout).Chars(), ")", NULL);
+                } else {
+                    this->OutLLn(__LOCATION__, "TryJoin join(joined)...", NULL);
+                    TryJoin join(joined);
+                    this->OutLLn(__LOCATION__, "...TryJoin join(joined)", NULL);
+                }
             }
             this->OutLLn(__LOCATION__, "...} try", NULL);
         } catch(const Exception& e) {

@@ -23,7 +23,7 @@
 #ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_MUTEX_H_
 #define _XOS_PLATFORM_OS_ORACLE_SOLARIS_MUTEX_H_
 
-#include "xos/platform/Os.h"
+#include "xos/platform/os/oracle/solaris/time.h"
 
 #if defined(SOLARIS)
 #else /*/ defined(SOLARIS) /*/
@@ -43,11 +43,13 @@ enum {
     LOCK_PRIO_INHERIT,
     LOCK_PRIO_PROTECT
 };
-int mutex_lock(mutex_t *mp);
-int mutex_unlock(mutex_t *mp);
-int mutex_trylock(mutex_t *mp);
-int mutex_init(mutex_t *mp, int type, void *arg);
-int mutex_destroy(mutex_t *mp);
+extern int mutex_init(mutex_t *mp, int type, void *arg);
+extern int mutex_destroy(mutex_t *mp);
+extern int mutex_lock(mutex_t *mp);
+extern int mutex_unlock(mutex_t *mp);
+extern int mutex_trylock(mutex_t *mp);
+extern int mutex_timedlock(mutex_t *mp, timestruc_t *abstime);
+extern int mutex_reltimedlock(mutex_t *mp, timestruc_t *reltime);
 
 #if defined(__cplusplus)
 } /*/ extern "C" /*/

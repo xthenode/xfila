@@ -41,7 +41,7 @@ int mutex_init(mutex_t *mp, int type, void *arg) {
     int err = EINVAL;
     if ((mp)) {
         ::xos::mt::os::Mutex* mtx = 0;
-        if ((mtx = new ::xos::mt::os::Mutex(NULL, false, false))) {
+        if ((mtx = new ::xos::mt::os::Mutex(((::xos::mt::os::Mutex::Attached)::xos::mt::os::Mutex::Unattached), false, false))) {
             if ((mtx->Create())) {
                 *mp = mtx;
                 err = 0;
@@ -97,6 +97,45 @@ int mutex_unlock(mutex_t *mp) {
         if ((mtx = ((::xos::mt::os::Mutex*)(*mp)))) {
             if ((mtx->Unlock())) {
                 err = 0;
+            }
+        }
+    }
+    return err;
+}
+int mutex_timedlock(mutex_t *mp, timestruc_t *abstime) {
+    int err = EINVAL;
+    if ((mp) && (abstime)) {
+        ::xos::mt::os::Mutex* mtx = 0;
+        if ((mtx = ((::xos::mt::os::Mutex*)(*mp)))) {
+            timestruc_t reltime;
+            if (!(err = ::clock_gettime(CLOCK_REALTIME, &reltime))) {
+                reltime.tv_sec = abstime->tv_sec - reltime.tv_sec;
+                reltime.tv_nsec = abstime->tv_nsec - reltime.tv_nsec;
+                err = mutex_reltimedlock(mp, &reltime);
+                return err;
+            }
+        }
+    }
+    return err;
+}
+int mutex_reltimedlock(mutex_t *mp, timestruc_t *reltime) {
+    int err = EINVAL;
+    if ((mp) && (reltime)) {
+        ::xos::mt::os::Mutex* mtx = 0;
+        if ((mtx = ((::xos::mt::os::Mutex*)(*mp)))) {
+            mseconds_t milliseconds = ::xos::SecondsMSeconds(reltime->tv_sec) + ::xos::NSecondsMSeconds(reltime->tv_nsec);
+            ::xos::LockStatus status = mtx->TimedLock(milliseconds);
+            if (::xos::LockSuccess == (status)) {
+                return 0;
+            } else {
+                if (::xos::LockBusy == (status)) {
+                    return ETIME;
+                } else {
+                    if (::xos::LockInterrupted == (status)) {
+                        return EINTR;
+                    } else {
+                    }
+                }
             }
         }
     }

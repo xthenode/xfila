@@ -23,8 +23,10 @@
 #ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_SYNCH_H_
 #define _XOS_PLATFORM_OS_ORACLE_SOLARIS_SYNCH_H_
 
+#include "xos/platform/os/oracle/solaris/time.h"
 #include "xos/platform/os/oracle/solaris/mutex.h"
 #include "xos/platform/os/oracle/solaris/semaphore.h"
+#include "xos/platform/os/oracle/solaris/condition.h"
 
 #if defined(SOLARIS)
 #else /*/ defined(SOLARIS) /*/

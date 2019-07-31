@@ -14,35 +14,33 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: semaphore.h
+///   File: condition.h
 ///
 /// Author: $author$
-///   Date: 7/23/2019
+///   Date: 7/29/2019
 ///////////////////////////////////////////////////////////////////////
 /*/
-#ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_H_
-#define _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_H_
+#ifndef _XOS_PLATFORM_OS_ORACLE_SOLARIS_CONDITION_H_
+#define _XOS_PLATFORM_OS_ORACLE_SOLARIS_CONDITION_H_
 
-#include "xos/platform/os/oracle/solaris/synch.h"
-
-#if defined(SOLARIS)
-#else /*/ defined(SOLARIS) /*/
-#endif /*/ defined(SOLARIS) /*/
+#include "xos/platform/os/oracle/solaris/mutex.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif /*/ defined(__cplusplus) /*/
 
-typedef void* sema_t;
+typedef void* cond_t;
 
-extern int sema_init(sema_t *sp, unsigned int count, int type, void *arg);
-extern int sema_destroy(sema_t *sp);
-extern int sema_post(sema_t *sp);
-extern int sema_wait(sema_t *sp);
-extern int sema_trywait(sema_t *sp);
+extern int cond_init(cond_t *cvp, int type, void *arg); 
+extern int cond_destroy(cond_t *cvp);
+extern int cond_wait(cond_t *cvp, mutex_t *mp);
+extern int cond_timedwait(cond_t *cvp, mutex_t *mp, timestruc_t *abstime);
+extern int cond_reltimedwait(cond_t *cvp, mutex_t *mp, timestruc_t *reltime);
+extern int cond_signal(cond_t *cvp);
+extern int cond_broadcast(cond_t *cvp);
 
 #if defined(__cplusplus)
 } /*/ extern "C" /*/
 #endif /*/ defined(__cplusplus) /*/
 
-#endif /*/ _XOS_PLATFORM_OS_ORACLE_SOLARIS_SEMAPHORE_H_ /*/
+#endif /*/ _XOS_PLATFORM_OS_ORACLE_SOLARIS_CONDITION_H_ /*/

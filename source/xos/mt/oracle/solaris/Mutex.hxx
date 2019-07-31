@@ -30,6 +30,36 @@
 #include "xos/platform/os/oracle/solaris/mutex.h"
 #endif /// defined(SOLARIS)
 
+#if !defined(MUTEX_HAS_TIMEDLOCK)
+#define MUTEX_HAS_TIMEDLOCK
+#endif /// !defined(MUTEX_HAS_TIMEDLOCK)
+
+#if !defined(MUTEX_HAS_RELTIMEDLOCK)
+#define MUTEX_HAS_RELTIMEDLOCK
+#endif /// !defined(MUTEX_HAS_RELTIMEDLOCK)
+
+#if defined(MUTEX_HAS_RELTIMEDLOCK)
+#define _timedlock "_reltimedlock"
+#define _mutex_timedlock mutex_reltimedlock
+inline int _clock_gettime(int id, timestruc_t* abstime) {
+    if ((abstime)) {
+        ::memset(abstime, 0, sizeof(timestruc_t));
+        return 0;
+    }
+    return EINVAL;
+}
+#else /// defined(MUTEX_HAS_RELTIMEDLOCK)
+#define _timedlock "_timedlock"
+#define _mutex_timedlock mutex_timedlock
+inline int _clock_gettime(int id, timestruc_t* abstime) {
+    if ((abstime)) {
+        int err = ::clock_gettime(id, abstime);
+        return err;
+    }
+    return EINVAL;
+}
+#endif /// defined(MUTEX_HAS_RELTIMEDLOCK)
+
 namespace xos {
 namespace mt {
 namespace oracle {
@@ -127,8 +157,40 @@ public:
     }
     virtual LockStatus TimedLockDetached(mutex_t& mutex, mseconds_t milliseconds) const { 
         if (0 < (milliseconds)) {
+#if defined(MUTEX_HAS_TIMEDLOCK)
+            bool isLogged = ((this->IsLogged()) && (milliseconds >= this->TimedLoggedThreasholdMilliseconds()));
+            int err = 0;
+            timestruc_t untilTime;
+
+            IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "::clock_gettime(CLOCK_REALTIME, &untilTime)...");
+            if ((err = ::_clock_gettime(CLOCK_REALTIME, &untilTime))) {
+                IS_ERR_LOGGED_ERROR("...failed " << err << " on ::clock_gettime(CLOCK_REALTIME, &untilTime)");
+                return LockFailed;
+            }
+            untilTime.tv_sec +=  MSecondsSeconds(milliseconds);
+            untilTime.tv_nsec +=  MSecondsNSeconds(MSecondsMSeconds(milliseconds));
+
+            IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "::mutex" << _timedlock << "(&mutex, &untilTime)...");
+            if ((err = ::_mutex_timedlock(&mutex, &untilTime))) {
+                switch(err) {
+                case ETIME:
+                    IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...ETIME err = "<< err << " on ::mutex" << _timedlock << "(&mutex, &untilTime)");
+                    return LockBusy;
+                case EINTR:
+                    IS_ERR_LOGGED_ERROR("...EINTR err = "<< err << " on ::mutex" << _timedlock << "(&mutex, &untilTime)");
+                    return LockInterrupted;
+                default:
+                    IS_ERR_LOGGED_ERROR("...failed err = "<< err << " on ::mutex" << _timedlock << "(&mutex, &untilTime)");
+                    return LockFailed;
+                }
+            } else {
+                IF_ERR_LOGGED_DEBUG_TRACE(isLogged, isLogged, "...::mutex" << _timedlock << "(&mutex, &untilTime)");
+                return LockSuccess;
+            }
+#else /// defined(MUTEX_HAS_TIMEDLOCK)
             IS_ERR_LOGGED_ERROR("...return LockInvalid");
             return LockInvalid;
+#endif /// defined(MUTEX_HAS_TIMEDLOCK)
         } else {
             if (0 > (milliseconds)) {
                 return UntimedLockDetached(mutex);
