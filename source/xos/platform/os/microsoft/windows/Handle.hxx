@@ -23,6 +23,7 @@
 
 #include "xos/platform/os/microsoft/windows/Handle.h"
 #include "xos/platform/os/microsoft/Windows.hxx"
+#include "xos/base/Logged.hxx"
 
 namespace xos {
 namespace platform {

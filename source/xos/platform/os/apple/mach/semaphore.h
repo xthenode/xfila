@@ -34,11 +34,11 @@
 #define semaphore_signal           platform_semaphore_signal
 #define semaphore_signal_all       platform_semaphore_signal_all
 #define semaphore_wait             platform_semaphore_wait
+#define semaphore_trywait          platform_semaphore_trywait
 #define semaphore_timedwait        platform_semaphore_timedwait
 #define semaphore_timedwait_signal platform_semaphore_timedwait_signal
 #define semaphore_wait_signal      platform_semaphore_wait_signal
 #define semaphore_signal_thread    platform_semaphore_signal_thread
-#else /// defined(APPLEOS)
 #endif /// defined(APPLEOS)
 
 typedef pointer_t semaphore_t;
@@ -52,6 +52,7 @@ extern kern_return_t semaphore_destroy(task_t task, semaphore_t semaphore);
 extern kern_return_t semaphore_signal(semaphore_t semaphore);
 extern kern_return_t semaphore_signal_all(semaphore_t semaphore);
 extern kern_return_t semaphore_wait(semaphore_t semaphore);
+extern kern_return_t semaphore_trywait(semaphore_t semaphore);
 extern kern_return_t semaphore_timedwait(semaphore_t semaphore, mach_timespec_t wait_time);
 extern kern_return_t semaphore_timedwait_signal(semaphore_t wait_semaphore, semaphore_t signal_semaphore, mach_timespec_t wait_time);
 extern kern_return_t semaphore_wait_signal(semaphore_t wait_semaphore, semaphore_t signal_semaphore);

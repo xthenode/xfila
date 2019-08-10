@@ -31,6 +31,16 @@
 #include <mach/mach.h>
 #include <mach/semaphore.h>
 
+#if !defined(SEMAPHORE_HAS_TRYWAIT)
+inline kern_return_t semaphore_trywait(semaphore_t semaphore ) { 
+    mach_timespec_t wait_time;    
+    wait_time.tv_sec = 0;
+    wait_time.tv_nsec = 0;
+    return ::semaphore_timedwait(semaphore, wait_time); 
+}
+#define SEMAPHORE_HAS_TRYWAIT
+#endif /// !defined(SEMAPHORE_HAS_TRYWAIT)
+
 namespace xos {
 namespace mt {
 namespace apple {
@@ -99,7 +109,34 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual AcquireStatus TryAcquireDetached(Attached detached) const { 
-        return TimedAcquireDetached(detached, 0); 
+#if defined(SEMAPHORE_HAS_TRYWAIT)
+        if (((Attached)Unattached) != detached) {
+            semaphore_t& semaphore = *detached;
+            kern_return_t err = 0;
+
+            IS_ERR_LOGGED_TRACE("::semaphore_trywait(semaphore)...");
+            if (KERN_SUCCESS == (err = ::semaphore_trywait(semaphore))) {
+                IS_ERR_LOGGED_TRACE("...::semaphore_trywait(semaphore)...");
+                return AcquireSuccess;
+            } else {
+                if (KERN_OPERATION_TIMED_OUT == (err)) {
+                    IS_ERR_LOGGED_TRACE("...failed KERN_OPERATION_TIMED_OUT err = " << err << " on ::semaphore_trywait(semaphore)");
+                    return AcquireBusy;
+                } else {
+                    if (KERN_ABORTED == (err)) {
+                        IS_ERR_LOGGED_ERROR("...failed KERN_ABORTED err = " << err << " on ::semaphore_trywait(semaphore)");
+                        return AcquireInterrupted;
+                    } else {
+                        IS_ERR_LOGGED_ERROR("...failed err = " << err << " on ::semaphore_trywait(semaphore)");
+                    }
+                }
+            }
+        }
+        return AcquireFailed; 
+#else /// defined(SEMAPHORE_HAS_TRYWAIT)
+        IS_ERR_LOGGED_ERROR("...return AcquireInvalid");
+        return AcquireInvalid; 
+#endif /// defined(SEMAPHORE_HAS_TRYWAIT)
     }
     virtual AcquireStatus TimedAcquireDetached(Attached detached, mseconds_t milliseconds) const { 
         if (0 > (milliseconds)) {
@@ -109,7 +146,7 @@ public:
                 semaphore_t& semaphore = *detached;
                 mseconds_t millisecondsThreashold = this->TimedLoggedThreasholdMilliseconds();
                 bool isLogged = ((this->IsLogged()) && (milliseconds >= millisecondsThreashold));
-                int err = 0;
+                kern_return_t err = 0;
                 mach_timespec_t wait_time;
 
                 wait_time.tv_sec = MSecondsSeconds(milliseconds);
@@ -139,7 +176,7 @@ public:
     virtual AcquireStatus UntimedAcquireDetached(Attached detached) const { 
         if (((Attached)Unattached) != detached) {
             semaphore_t& semaphore = *detached;
-            int err = 0;
+            kern_return_t err = 0;
 
             IS_ERR_LOGGED_DEBUG("::semaphore_wait(semaphore)...");
             if (KERN_SUCCESS == (err = ::semaphore_wait(semaphore))) {
@@ -164,7 +201,7 @@ public:
     virtual AcquireStatus UntimedReleaseDetached(Attached detached) const { 
         if (((Attached)Unattached) != detached) {
             semaphore_t& semaphore = *detached;
-            int err = 0;
+            kern_return_t err = 0;
 
             IS_ERR_LOGGED_DEBUG("::semaphore_signal(semaphore)...");
             if (KERN_SUCCESS == (err = ::semaphore_signal(semaphore))) {
@@ -193,7 +230,7 @@ public:
         Attached detached = ((Attached)Unattached);
         sync_policy_t syncPolicy = SYNC_POLICY_FIFO;
         task_t task = mach_task_self();
-        int err = 0;
+        kern_return_t err = 0;
 
         IS_ERR_LOGGED_DEBUG("::semaphore_create(task, &semaphore, syncPolicy, initiallyReleased)...");
         if (KERN_SUCCESS != (err = ::semaphore_create(task, &semaphore, syncPolicy, initiallyReleased))) {
@@ -208,7 +245,7 @@ public:
         if (((Attached)Unattached) != detached) {
             semaphore_t& semaphore = *detached;
             task_t task = mach_task_self();
-            int err = 0;
+            kern_return_t err = 0;
 
             IS_ERR_LOGGED_DEBUG("::semaphore_destroy(task, semaphore)...")
             if (KERN_SUCCESS != (err = ::semaphore_destroy(task, semaphore))) {

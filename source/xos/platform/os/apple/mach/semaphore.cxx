@@ -80,6 +80,25 @@ kern_return_t semaphore_wait(semaphore_t semaphore ) {
     }
     return KERN_FAILURE; 
 }
+kern_return_t semaphore_trywait(semaphore_t semaphore ) { 
+    ::xos::mt::os::Semaphore* pSemaphore = 0;
+    if ((pSemaphore = ((::xos::mt::os::Semaphore*)semaphore))) {
+        ::xos::AcquireStatus status = ::xos::AcquireFailed;
+        if (::xos::AcquireSuccess == (status = pSemaphore->TryAcquire())) {
+            return KERN_SUCCESS;
+        } else {
+            if (::xos::AcquireBusy == (status)) {
+                return KERN_OPERATION_TIMED_OUT;
+            } else {
+                if (::xos::AcquireInterrupted == (status)) {
+                    return KERN_ABORTED;
+                } else {
+                }
+            }
+        }
+    }
+    return KERN_FAILURE; 
+}
 kern_return_t semaphore_timedwait(semaphore_t semaphore, mach_timespec_t wait_time ) { 
     ::xos::mt::os::Semaphore* pSemaphore = 0;
     if ((pSemaphore = ((::xos::mt::os::Semaphore*)semaphore))) {
