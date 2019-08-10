@@ -96,6 +96,13 @@ $${XFILA_SRC}/xos/platform/os/posix/semaphore.cxx \
 \
 $${XFILA_SRC}/xos/platform/os/Semaphores.hxx \
 \
+$${XFILA_SRC}/xos/mt/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/apple/osx/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/posix/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/os/Mutex.hxx \
+\
 $${XFILA_SRC}/xos/mt/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/microsoft/windows/Semaphore.hxx \
 $${XFILA_SRC}/xos/mt/oracle/solaris/Semaphore.hxx \
