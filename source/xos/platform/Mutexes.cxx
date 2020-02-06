@@ -21,6 +21,7 @@
 #include "xos/platform/Mutexes.hxx"
 #include "xos/platform/posix/mutex.cxx"
 #include "xos/platform/os/microsoft/windows/Mutex.cxx"
+#include "xos/platform/os/oracle/solaris/mutex.cxx"
 
 namespace xos {
 namespace platform {
