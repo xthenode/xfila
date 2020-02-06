@@ -87,10 +87,6 @@ $${XFILA_SRC}/xos/app/console/mt/condition/Main.hxx \
 # condition SOURCES
 #
 condition_SOURCES += \
-\
-$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutex.cxx \
-$${XFILA_SRC}/xos/platform/os/oracle/solaris/condition.cxx \
-\
 $${XFILA_SRC}/xos/app/console/mt/condition/MainOpt.cxx \
 $${XFILA_SRC}/xos/app/console/mt/condition/Main.cxx \
 

@@ -55,9 +55,41 @@ $${xfila_DEFINES} \
 # libxfila HEADERS
 #
 libxfila_HEADERS += \
-$${XFILA_SRC}/xos/platform/posix/mutex.hxx \
 $${XFILA_SRC}/xos/platform/os/microsoft/windows/Mutex.hxx \
+$${XFILA_SRC}/xos/platform/posix/mutex.hxx \
 $${XFILA_SRC}/xos/platform/Mutexes.hxx \
+\
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Semaphore.hxx \
+$${XFILA_SRC}/xos/platform/posix/semaphore.hxx \
+$${XFILA_SRC}/xos/platform/Semaphores.hxx \
+\
+$${XFILA_SRC}/xos/platform/os/microsoft/windows/Thread.hxx \
+$${XFILA_SRC}/xos/platform/posix/thread.hxx \
+$${XFILA_SRC}/xos/platform/Threads.hxx \
+\
+$${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/apple/osx/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/posix/Mutex.hxx \
+$${XFILA_SRC}/xos/mt/Mutexes.hxx \
+\
+$${XFILA_SRC}/xos/mt/microsoft/windows/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/apple/osx/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/posix/Semaphore.hxx \
+$${XFILA_SRC}/xos/mt/Semaphores.hxx \
+\
+$${XFILA_SRC}/xos/mt/microsoft/windows/Condition.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Condition.hxx \
+$${XFILA_SRC}/xos/mt/apple/osx/Condition.hxx \
+$${XFILA_SRC}/xos/mt/posix/Condition.hxx \
+$${XFILA_SRC}/xos/mt/Conditions.hxx \
+\
+$${XFILA_SRC}/xos/mt/microsoft/windows/Thread.hxx \
+$${XFILA_SRC}/xos/mt/oracle/solaris/Thread.hxx \
+$${XFILA_SRC}/xos/mt/apple/osx/Thread.hxx \
+$${XFILA_SRC}/xos/mt/posix/Thread.hxx \
+$${XFILA_SRC}/xos/mt/Threads.hxx \
 \
 $${XFILA_SRC}/xos/lib/xfila/Version.h \
 $${XFILA_SRC}/xos/lib/xfila/Version.hxx \
@@ -65,7 +97,13 @@ $${XFILA_SRC}/xos/lib/xfila/Version.hxx \
 # libxfila SOURCES
 #
 libxfila_SOURCES += \
-$${XFILA_SRC}/xos/platform/Mutexes.cxx \
+$${XFILA_SRC}/xos/mt/Mutexes.cxx \
+\
+$${XFILA_SRC}/xos/mt/Semaphores.cxx \
+\
+$${XFILA_SRC}/xos/mt/Conditions.cxx \
+\
+$${XFILA_SRC}/xos/mt/Threads.cxx \
 \
 $${XFILA_SRC}/xos/lib/xfila/Version.cxx \
 

@@ -96,16 +96,8 @@ $${XFILA_SRC}/xos/app/console/mt/mutex/Main.hxx \
 # mutex SOURCES
 #
 mutex_SOURCES += \
-\
-$${XFILA_SRC}/xos/platform/os/oracle/solaris/mutexes.cxx \
-\
-$${XFILA_SRC}/xos/mt/os/Os.cxx \
-$${XFILA_SRC}/xos/mt/microsoft/windows/Mutex.cxx \
-\
 $${XFILA_SRC}/xos/app/console/mt/mutex/MainOpt.cxx \
 $${XFILA_SRC}/xos/app/console/mt/mutex/Main.cxx \
-
-_mutex_SOURCES += \
 
 ########################################################################
 # mutex FRAMEWORKS

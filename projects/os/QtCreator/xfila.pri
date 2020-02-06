@@ -1,5 +1,5 @@
 ########################################################################
-# Copyright (c) 1988-2019 $organization$
+# Copyright (c) 1988-2020 $organization$
 #
 # This software is provided by the author and contributors ``as is''
 # and any express or implied warranties, including, but not limited to,
@@ -16,10 +16,11 @@
 #   File: xfila.pri
 #
 # Author: $author$
-#   Date: 6/20/2019
+#   Date: 2/5/2020
 #
-# Os QtCreator .pri file for xfila
+# QtCreator .pri file for xfila
 ########################################################################
+
 UNAME = $$system(uname)
 
 contains(UNAME,Darwin) {
@@ -38,8 +39,18 @@ BUILD_OS = $${XFILA_OS}
 BUILD_OS = os
 } # contains(BUILD_OS,XFILA_OS)
 
-#CONFIG += c++11
-#CONFIG += c++0x
+contains(BUILD_CPP_VERSION,10) {
+CONFIG += c++0x
+} else {
+contains(BUILD_CPP_VERSION,98|03|11|14|17) {
+CONFIG += c++$${BUILD_CPP_VERSION}
+} else {
+} # contains(BUILD_CPP_VERSION,98|03|11|14|17)
+} # contains(BUILD_CPP_VERSION,10)
+
+contains(XROSTRA_OS,linux) {
+QMAKE_CXXFLAGS += -fpermissive
+}
 
 ########################################################################
 # xos
@@ -57,14 +68,6 @@ XOS_LIB = $${XOS_PKG_BLD}/lib
 #XOS_LIB = $${XOS_PRJ_BLD}/lib
 #XOS_LIB = $${XFILA_LIB}
 
-# xos INCLUDEPATH
-#
-contains(XFILA_OS,windows|linux) {
-xos_INCLUDEPATH += \
-$${XOS_SRC}/xos/platform/os/apple
-} else {
-} # contains(XFILA_OS,windows|linux)
-
 # xos LIBS
 #
 xos_LIBS += \
@@ -72,16 +75,55 @@ xos_LIBS += \
 -l$${XOS_NAME} \
 
 ########################################################################
+# xrostra
+XROSTRA_THIRDPARTY_PKG_MAKE_BLD = $${XROSTRA_THIRDPARTY_PKG}/build/$${BUILD_OS}/$${BUILD_CONFIG}
+XROSTRA_THIRDPARTY_PRJ_MAKE_BLD = $${OTHER_BLD}/$${XROSTRA_THIRDPARTY_PRJ}/build/$${BUILD_OS}/$${BUILD_CONFIG}
+XROSTRA_THIRDPARTY_PKG_BLD = $${XROSTRA_THIRDPARTY_PKG}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+XROSTRA_THIRDPARTY_PRJ_BLD = $${OTHER_BLD}/$${XROSTRA_THIRDPARTY_PRJ}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+XROSTRA_PKG_BLD = $${OTHER_BLD}/$${XROSTRA_PKG}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+XROSTRA_PRJ_BLD = $${OTHER_BLD}/$${XROSTRA_PRJ}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+#XROSTRA_LIB = $${XROSTRA_THIRDPARTY_PKG_MAKE_BLD}/lib
+#XROSTRA_LIB = $${XROSTRA_THIRDPARTY_PRJ_MAKE_BLD}/lib
+#XROSTRA_LIB = $${XROSTRA_THIRDPARTY_PKG_BLD}/lib
+#XROSTRA_LIB = $${XROSTRA_THIRDPARTY_PRJ_BLD}/lib
+XROSTRA_LIB = $${XROSTRA_PKG_BLD}/lib
+#XROSTRA_LIB = $${XROSTRA_PRJ_BLD}/lib
+#XROSTRA_LIB = $${XFILA_LIB}
+
+# xrostra LIBS
+#
+xrostra_LIBS += \
+-L$${XROSTRA_LIB}/lib$${XROSTRA_NAME} \
+-l$${XROSTRA_NAME} \
+
+########################################################################
+# xnadir
+XNADIR_THIRDPARTY_PKG_MAKE_BLD = $${XNADIR_THIRDPARTY_PKG}/build/$${BUILD_OS}/$${BUILD_CONFIG}
+XNADIR_THIRDPARTY_PRJ_MAKE_BLD = $${OTHER_BLD}/$${XNADIR_THIRDPARTY_PRJ}/build/$${BUILD_OS}/$${BUILD_CONFIG}
+XNADIR_THIRDPARTY_PKG_BLD = $${XNADIR_THIRDPARTY_PKG}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+XNADIR_THIRDPARTY_PRJ_BLD = $${OTHER_BLD}/$${XNADIR_THIRDPARTY_PRJ}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+XNADIR_PKG_BLD = $${OTHER_BLD}/$${XNADIR_PKG}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+XNADIR_PRJ_BLD = $${OTHER_BLD}/$${XNADIR_PRJ}/build/$${BUILD_OS}/QtCreator/$${BUILD_CONFIG}
+#XNADIR_LIB = $${XNADIR_THIRDPARTY_PKG_MAKE_BLD}/lib
+#XNADIR_LIB = $${XNADIR_THIRDPARTY_PRJ_MAKE_BLD}/lib
+#XNADIR_LIB = $${XNADIR_THIRDPARTY_PKG_BLD}/lib
+#XNADIR_LIB = $${XNADIR_THIRDPARTY_PRJ_BLD}/lib
+XNADIR_LIB = $${XNADIR_PKG_BLD}/lib
+#XNADIR_LIB = $${XNADIR_PRJ_BLD}/lib
+#XNADIR_LIB = $${XFILA_LIB}
+
+# xnadir LIBS
+#
+xnadir_LIBS += \
+-L$${XNADIR_LIB}/lib$${XNADIR_NAME} \
+-l$${XNADIR_NAME} \
+
+########################################################################
 # xfila
 
 # xfila INCLUDEPATH
 #
-contains(XFILA_OS,windows|linux) {
 xfila_INCLUDEPATH += \
-$${XFILA_SRC}/xos/platform/os/apple \
-$${XOS_SRC}/xos/platform/os/apple
-} else {
-} # contains(XFILA_OS,windows|linux)
 
 # xfila DEFINES
 #
@@ -90,6 +132,8 @@ xfila_DEFINES += \
 # xfila LIBS
 #
 xfila_LIBS += \
+$${xnadir_LIBS} \
+$${xrostra_LIBS} \
 $${xos_LIBS} \
 $${build_xfila_LIBS} \
 
@@ -106,6 +150,4 @@ xfila_LIBS += \
 } else {
 } # contains(XFILA_OS,linux)
 
-contains(XFILA_OS,solaris) {
-} else {
-} # contains(XFILA_OS,solaris)
+

@@ -66,9 +66,6 @@ $${XFILA_SRC}/xos/app/console/mt/thread/Main.hxx \
 # thread SOURCES
 #
 thread_SOURCES += \
-\
-$${XFILA_SRC}/xos/mt/posix/Thread.cxx \
-\
 $${XFILA_SRC}/xos/app/console/mt/thread/MainOpt.cxx \
 $${XFILA_SRC}/xos/app/console/mt/thread/Main.cxx \
 

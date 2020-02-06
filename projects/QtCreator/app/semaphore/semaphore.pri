@@ -121,10 +121,6 @@ $${XFILA_SRC}/xos/app/console/mt/semaphore/Main.hxx \
 # semaphore SOURCES
 #
 semaphore_SOURCES += \
-$${XFILA_SRC}/xos/platform/os/apple/mach/task.cxx \
-\
-$${XFILA_SRC}/xos/platform/os/Semaphores.cxx \
-\
 $${XFILA_SRC}/xos/app/console/mt/semaphore/MainOpt.cxx \
 $${XFILA_SRC}/xos/app/console/mt/semaphore/Main.cxx \
 
